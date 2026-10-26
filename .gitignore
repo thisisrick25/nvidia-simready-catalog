@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Data cache and generated outputs (regenerable via pipeline)
+data/cache/
+data/*.parquet
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Secrets
+.env
+HF_TOKEN*
