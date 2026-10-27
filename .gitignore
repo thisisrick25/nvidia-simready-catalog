@@ -7,8 +7,7 @@ venv/
 .pytest_cache/
 
 # Data cache and generated outputs (regenerable via pipeline)
-data/cache/
-data/*.parquet
+data/
 
 # OS
 Thumbs.db
