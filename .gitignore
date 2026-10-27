@@ -17,3 +17,6 @@ Thumbs.db
 # Secrets
 .env
 HF_TOKEN*
+
+# SDD scratch (progress ledger, briefs, review packages)
+.superpowers/
