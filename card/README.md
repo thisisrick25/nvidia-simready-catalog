@@ -20,20 +20,20 @@ pretty_name: SimReady Assets (NVIDIA)
 > [!NOTE]
 > This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-10-30. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
 
-NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **20 assets** totaling **489.36 GB** under **CC-BY-4.0**.
+NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **2,677 assets** totaling **489.68 GB** under **CC-BY-4.0**.
 
 ## Dataset at a glance
 
 |  |  |
 |---|---|
-| Assets | 20 |
-| Total size | 489.36 GB |
-| Files | 183,200 |
-| Categories | 1 |
-| Articulated assets | 0 (0.0%) |
-| PhysX variant | 20 |
-| MuJoCo variant | 20 |
-| Newton variant | 20 |
+| Assets | 2,677 |
+| Total size | 489.68 GB |
+| Files | 183,394 |
+| Categories | 14 |
+| Articulated assets | 5 (0.2%) |
+| PhysX variant | 2,669 |
+| MuJoCo variant | 2,669 |
+| Newton variant | 2,669 |
 | License | CC-BY-4.0 |
 | Data as of | 2026-10-30 |
 
@@ -71,7 +71,20 @@ Asset names follow `<category>_<type>_<variant>` (e.g. `food_produce_banana_m01`
 
 | Category (taxonomy group) | Assets |
 |---|---|
-| common_assets | 20 |
+| common_assets | 2,314 |
+| props_isaac | 92 |
+| props_food | 91 |
+| omniverse | 85 |
+| props_warehouse | 32 |
+| SIM_READY | 32 |
+| props_kitchenware | 6 |
+| props_automotive_workshop_tools | 5 |
+| props_softbody | 4 |
+| props_endeavor_kitchen | 3 |
+| props_automotive_parts | 2 |
+| props_automotive_equipment | 1 |
+| props_kitchen_france | 1 |
+| props_hospital | 1 |
 
 ![Assets per category](assets/categories.png)
 
@@ -81,12 +94,12 @@ Per-mesh physics properties (`physics:mass`, `physics:centerOfMass`, `physics:di
 
 | Mass (per-asset sum) | Value |
 |---|---|
-| Minimum | 0.175078 kg |
-| Median | 2.79144 kg |
-| Mean | 18.0471 kg |
-| Maximum | 183.045 kg |
+| Minimum | 0 kg |
+| Median | 0.916132 kg |
+| Mean | 1789.14 kg |
+| Maximum | 952461 kg |
 
-Collision approximations in use: `sdf` (193)
+Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
 
 ![Mass distribution](assets/mass_hist.png)
 ![Download size](assets/sizes_hist.png)
@@ -95,31 +108,31 @@ Collision approximations in use: `sdf` (193)
 
 | Asset | Mass (kg) |
 |---|---|
-| Xray_machine_XrayArmRack_a01 | 183.045 |
-| Xray_machine_buckyTable_a01 | 36.9376 |
-| TV_a01 | 35.2989 |
-| CT_injection_system_a01 | 25.3864 |
-| Xray_machine_HVgenerator_a01 | 16.0634 |
-| Xray_machine_buckyStand_a01 | 13.0065 |
-| IV_pole_b01 | 12.5503 |
-| airSystem_compressor_a01 | 11.3487 |
-| IV_pole_b03 | 9.76659 |
-| airSystem_air_filter_box_c01 | 2.97001 |
+| modular_warehouse_h10m_corner_out_a01 | 952461 |
+| exhaustSystem_exhaust_manifold_f01 | 501226 |
+| modular_warehouse_h10m_straight_90_a04 | 404025 |
+| warehouse_h10m_straight_90_a04 | 400081 |
+| warehouse_h10m_straight_a04 | 399748 |
+| modular_warehouse_h10m_straight_a04 | 398601 |
+| modular_warehouse_h10m_center_a01 | 302944 |
+| set_office_main_a01 | 267161 |
+| structure_wall_corner_a01 | 217653 |
+| structure_wall_entrance_a01 | 192774 |
 
 ### Lightest assets
 
 | Asset | Mass (kg) |
 |---|---|
-| accessory_eyeglasses_a01 | 0.175078 |
-| airSystem_air_filter_a01 | 0.29873 |
-| airSystem_air_filter_c01 | 0.397438 |
-| airSystem_air_filter_box_a01 | 1.50709 |
-| IV_pole_a03 | 1.59252 |
-| IV_pole_a04 | 1.61199 |
-| IV_pole_a02 | 1.62116 |
-| airSystem_air_filter_box_d01 | 2.24451 |
-| IV_pole_b02 | 2.50808 |
-| IV_pole_a01 | 2.61286 |
+| blinds_window_2m_closed_a01 | 0 |
+| tape_safety_white_2m10cm_b01 | 0 |
+| hardware_bearing_caster_a01 | 0.000109254 |
+| factory_nut_m4_loose | 0.000267644 |
+| factory_nut_m4_tight | 0.000268642 |
+| hardware_screw_95_a01 | 0.000406182 |
+| hardware_screw_99_physics_a01 | 0.0005 |
+| factory_bolt_m04_loose | 0.00063011 |
+| screw_high_res | 0.000635557 |
+| factory_bolt_m04_tight | 0.000651707 |
 
 ## Physics engine variants
 
@@ -129,33 +142,45 @@ Each asset declares MuJoCo / Newton / PhysX physics variants in `base.usda` (`Va
 
 ## Validation (SimReady Foundation)
 
-Assets embed their own validation results (`SimReady_Metadata → validation`), produced by NVIDIA's [simready-foundation](https://github.com/NVIDIA/simready-foundation) tooling against the `Robotics-Prop` profile. Overall pass rate across parsed validation rows: **59.8%**.
+Assets embed their own validation results (`SimReady_Metadata → validation`), produced by NVIDIA's [simready-foundation](https://github.com/NVIDIA/simready-foundation) tooling against the `Robotics-Prop` profile. Overall pass rate across parsed validation rows: **55.6%**.
 
 | Feature | Pass rate | Passed / total |
 |---|---|---|
-| FET000_CORE | 100.0% | 27 / 27 |
-| FET001_BASE_NEUTRAL | 0.0% | 0 / 30 |
-| FET003_BASE_NEUTRAL | 100.0% | 30 / 30 |
-| FET003_BASE_PHYSX | 100.0% | 30 / 30 |
-| FET004_BASE_NEUTRAL | 73.3% | 22 / 30 |
-| FET004_BASE_PHYSX | 73.3% | 22 / 30 |
-| FET005_BASE_NEUTRAL | 30.0% | 9 / 30 |
-| FET006_BASE_MDL | 0.0% | 0 / 27 |
+| FET000_CORE | 91.8% | 3,187 / 3,471 |
+| FET001_BASE_NEUTRAL | 1.5% | 54 / 3,690 |
+| FET003_BASE_NEUTRAL | 99.9% | 3,684 / 3,689 |
+| FET003_BASE_PHYSX | 99.3% | 3,610 / 3,637 |
+| FET004_BASE_NEUTRAL | 42.6% | 1,571 / 3,690 |
+| FET004_BASE_PHYSX | 42.3% | 1,538 / 3,637 |
+| FET005_BASE_NEUTRAL | 65.4% | 2,412 / 3,690 |
+| FET006_BASE_MDL | 1.2% | 40 / 3,470 |
+| FET100_BASE_ISAACSIM | 0.0% | 0 / 1 |
 
 Most common failing requirements:
 
 | Failing requirement | Occurrences |
 |---|---|
-| AA.001 | 30 |
-| VM.MDL.001 | 27 |
-| GSP.001 | 21 |
-| RB.MB.001 | 16 |
+| RB.MB.001 | 3,973 |
+| AA.001 | 3,464 |
+| VM.MDL.001 | 3,417 |
+| GSP.001 | 1,190 |
+| NP.008 | 169 |
+| HI.009 | 83 |
+| COL.001 | 38 |
+| VM.MAT.001 | 25 |
+| RB.001 | 20 |
+| NP.005 | 9 |
+| VM.TEX.002 | 3 |
+| PMT.001 | 3 |
+| NP.006 | 2 |
+| JT.002 | 2 |
+| ISA.001 | 1 |
 
 ![Validation pass rates](assets/validation.png)
 
 ## Growth
 
-Packaging dates extracted from package IDs run 2026-10-08 → 2026-10-13:
+Packaging dates extracted from package IDs run 2026-10-08 → 2026-10-29:
 
 ![Growth](assets/growth.png)
 
