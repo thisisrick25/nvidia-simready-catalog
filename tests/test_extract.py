@@ -20,8 +20,8 @@ def make_cache(root: Path):
     inv = pd.DataFrame(
         [
             {"path": "food_produce_banana_m01/simready_usd/payloads/instances_physx.usda", "asset": "food_produce_banana_m01", "size": 5497, "kind": "payload_usda", "ext": ".usda"},
-            {"path": "food_produce_banana_m01/.thumbs/256x256/sm_food_produce_banana_m01_01_usd_lit.png", "asset": "food_produce_banana_m01", "size": 9000, "kind": "thumb_lit", "ext": ".png"},
-            {"path": "food_produce_banana_m01/.thumbs/256x256/sm_food_produce_banana_m01_01_usd_unlit.png", "asset": "food_produce_banana_m01", "size": 8000, "kind": "thumb_unlit", "ext": ".png"},
+            {"path": "food_produce_banana_m01/.thumbs/256x256/sm_food_produce_banana_m01_01.usd.png", "asset": "food_produce_banana_m01", "size": 9000, "kind": "thumb_default", "ext": ".png"},
+            {"path": "food_produce_banana_m01/.thumbs/256x256/sm_food_produce_banana_m01_01.usd_light.png", "asset": "food_produce_banana_m01", "size": 8000, "kind": "thumb_light", "ext": ".png"},
         ]
     )
     return inv
@@ -39,7 +39,7 @@ def test_extract_asset_banana(tmp_path):
     assert row["all_features_passed"] is False
     assert row["license"] == "CC-BY-4.0"
     assert row["packaged_date"] == "2026-10-09"
-    assert "resolve/main" in row["thumb_url"] and "unlit" not in row["thumb_url"]
+    assert "resolve/main" in row["thumb_url"] and row["thumb_url"].endswith(".usd.png")
     assert len(meshes) == 1 and len(vals) == 8 and len(mats) == 1
     assert mats[0]["shader_class"] == "opaque"
     assert mats[0]["semantic_tokens"] == "organic"
@@ -59,3 +59,54 @@ def test_extract_all_writes_parquets(tmp_path):
     assert len(assets) == 2
     for f in ("assets", "meshes", "validation", "materials"):
         assert (out / f"{f}.parquet").exists()
+
+
+def test_extract_asset_falls_back_to_newton_payload(tmp_path):
+    a = tmp_path / "food_produce_banana_m01"
+    (a / "simready_usd" / "payloads").mkdir(parents=True)
+    (a / "simready_usd" / "payloads" / "instances_newton.usda").write_text(BANANA_USDA, encoding="utf-8")
+    row, meshes, vals, mats = extract_asset(a, pd.DataFrame())
+    assert row["parse_status"] == "ok"
+    assert abs(row["mass_kg"] - 0.20842493) < 1e-9
+    assert len(meshes) == 1
+
+
+def test_extract_asset_no_physics_payload(tmp_path):
+    a = tmp_path / "no_physics_x01"
+    (a / "simready_usd" / "payloads").mkdir(parents=True)
+    (a / "simready_usd" / "payloads" / "base.usda").write_text("#usda 1.0\n", encoding="utf-8")
+    (a / "simready_usd" / "payloads" / "materials.usda").write_text("#usda 1.0\n", encoding="utf-8")
+    row, meshes, vals, mats = extract_asset(a, pd.DataFrame())
+    assert row["parse_status"] == "no_physics_payload"
+    assert row["parse_error"] and "base.usda" in row["parse_error"] and "materials.usda" in row["parse_error"]
+    assert meshes == [] and vals == []
+
+
+def test_extract_asset_parse_error_never_crashes(tmp_path):
+    a = tmp_path / "broken_asset_x01"
+    payloads = a / "simready_usd" / "payloads"
+    payloads.mkdir(parents=True)
+    (payloads / "instances_physx.usda").mkdir()
+    row, meshes, vals, mats = extract_asset(a, pd.DataFrame())
+    assert row["parse_status"] == "parse_error"
+    assert row["parse_error"]
+    assert meshes == [] and vals == []
+
+
+def test_extract_asset_merges_articulation_from_base(tmp_path):
+    a = tmp_path / "articulated_x01"
+    (a / "simready_usd" / "payloads").mkdir(parents=True)
+    (a / "simready_usd" / "payloads" / "instances_physx.usda").write_text(BANANA_USDA, encoding="utf-8")
+    base_usda = (
+        "#usda 1.0\n"
+        "def PhysicsRevoluteJoint \"joint_0\" (\n"
+        "    prepend apiSchemas = [\"PhysicsArticulationRootAPI\"]\n"
+        ")\n"
+        "{\n"
+        "}\n"
+    )
+    (a / "simready_usd" / "payloads" / "base.usda").write_text(base_usda, encoding="utf-8")
+    row, meshes, vals, mats = extract_asset(a, pd.DataFrame())
+    assert row["parse_status"] == "ok"
+    assert row["has_articulation"] is True
+    assert json.loads(row["joint_types"]) == {"revolute": 1}

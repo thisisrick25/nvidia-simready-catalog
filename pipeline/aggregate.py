@@ -7,6 +7,14 @@ import pandas as pd
 
 from pipeline.config import DATA_DIR
 
+# Heuristic ceiling for a single asset's summed mass. A handful of upstream
+# NVIDIA payload files carry physically implausible physics:mass values
+# (e.g. a single exhaust-manifold part at ~500,000 kg) that are almost
+# certainly authoring/export defects, not legitimate weights. We never
+# mutate the source data - we only report how many assets exceed this
+# threshold so downstream readers can judge the mean/max with that context.
+MASS_OUTLIER_THRESHOLD_KG = 5000.0
+
 
 def compute_stats(assets, meshes, validation, inventory):
     stats = {"as_of": date.today().isoformat()}
@@ -14,6 +22,9 @@ def compute_stats(assets, meshes, validation, inventory):
     stats["n_ok"] = int((assets["parse_status"] == "ok").sum())
     stats["n_parse_errors"] = int((assets["parse_status"] == "parse_error").sum())
     stats["n_no_payloads"] = int((assets["parse_status"] == "no_payloads").sum())
+    stats["n_no_physics_payload"] = int(
+        (assets["parse_status"] == "no_physics_payload").sum()
+    )
     stats["total_size_gb"] = round(float(inventory["size"].sum()) / 1e9, 2)
     stats["n_files"] = int(len(inventory))
 
@@ -37,6 +48,7 @@ def compute_stats(assets, meshes, validation, inventory):
 
     mass = pd.to_numeric(assets["mass_kg"], errors="coerce").dropna()
     if len(mass):
+        outliers = mass[mass > MASS_OUTLIER_THRESHOLD_KG]
         stats["mass_stats"] = {
             "min": float(mass.min()),
             "median": float(mass.median()),
@@ -44,6 +56,9 @@ def compute_stats(assets, meshes, validation, inventory):
             "max": float(mass.max()),
             "n": int(len(mass)),
         }
+        stats["mass_outlier_threshold_kg"] = MASS_OUTLIER_THRESHOLD_KG
+        stats["mass_outliers_count"] = int(len(outliers))
+        stats["mass_outliers_pct"] = round(100 * len(outliers) / len(mass), 2)
         ranked = assets.dropna(subset=["mass_kg"])
         stats["heaviest10"] = ranked.nlargest(10, "mass_kg")[
             ["asset", "mass_kg"]
@@ -53,6 +68,9 @@ def compute_stats(assets, meshes, validation, inventory):
         ].values.tolist()
     else:
         stats["mass_stats"] = None
+        stats["mass_outlier_threshold_kg"] = MASS_OUTLIER_THRESHOLD_KG
+        stats["mass_outliers_count"] = 0
+        stats["mass_outliers_pct"] = 0.0
         stats["heaviest10"] = []
         stats["lightest10"] = []
 

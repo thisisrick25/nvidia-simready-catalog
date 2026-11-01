@@ -80,7 +80,7 @@ with tab_assets:
     if cat_filter:
         view = view[view["taxonomy_group"].isin(cat_filter)]
     if q:
-        view = view[view["asset"].str.contains(q, case=False, na=False)]
+        view = view[view["asset"].str.contains(q, case=False, na=False, regex=False)]
     st.write(f"{len(view)} assets")
     display = view[
         [

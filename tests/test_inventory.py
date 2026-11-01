@@ -16,8 +16,10 @@ def test_classify_kinds():
     assert classify("a/simready_usd/payloads/PhysX/base.usda") == "payload_usda"
     assert classify("a/simready_usd/payloads/geometries.usd") == "geometry"
     assert classify("a/simready_usd/sm_a_01.usd") == "sm_usd"
-    assert classify("a/.thumbs/256x256/sm_a_01_usd_lit.png") == "thumb_lit"
-    assert classify("a/.thumbs/256x256/sm_a_01_usd_unlit.png") == "thumb_unlit"
+    assert classify("a/.thumbs/256x256/sm_a_01.usd.png") == "thumb_default"
+    assert classify("a/.thumbs/256x256/sm_a_01.usd_light.png") == "thumb_light"
+    assert classify("a/.thumbs/256x256/sm_a_01.usd_transparent.png") == "thumb_transparent"
+    assert classify("a/.thumbs/256x256/sm_a_01_thumbnail.png") == "thumb_composite"
     assert classify("a/Textures/tile.png") == "texture"
     assert classify("a/simready_usd/source_assets/model.usd") == "source_asset"
 

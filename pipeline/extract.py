@@ -34,6 +34,35 @@ def _payload_files(asset_dir: Path):
     return sorted(d.glob("*.usda"))
 
 
+PHYSICS_PAYLOAD_PRIORITY = (
+    "instances_physx.usda",
+    "instances_newton.usda",
+    "instances_mujoco.usda",
+    "instances.usda",
+)
+
+
+def _select_physics_payload(files):
+    """Pick the payload file that actually carries per-mesh physics data.
+
+    Only files named in PHYSICS_PAYLOAD_PRIORITY contain `physics:mass` /
+    `physics:approximation` attributes. Falling back to an arbitrary .usda
+    file (e.g. base.usda or materials.usda) silently yields mass_kg=0 and
+    mesh_count=0 with no indication anything went wrong, so we return None
+    instead when no known physics payload is present.
+    """
+    by_name = {f.name: f for f in files}
+    for name in PHYSICS_PAYLOAD_PRIORITY:
+        if name in by_name:
+            return by_name[name]
+    return None
+
+
+THUMB_KINDS_BY_PREFERENCE = (
+    "thumb_default", "thumb_light", "thumb_transparent", "thumb_composite", "thumb_other",
+)
+
+
 def _semantic_tokens(material_name):
     parts = str(material_name).split("__")
     return "|".join(parts[1:-1]) if len(parts) > 2 else ""
@@ -60,18 +89,25 @@ def extract_asset(asset_dir: Path, inv: pd.DataFrame):
         if len(sub):
             row["size_total_bytes"] = int(sub["size"].sum())
             row["size_payload_bytes"] = int(sub.loc[sub["kind"] == "payload_usda", "size"].sum())
-            lit = sorted(sub.loc[sub["kind"] == "thumb_lit", "path"])
-            if lit:
-                row["thumb_url"] = HF_BASE + lit[0]
+            for kind in THUMB_KINDS_BY_PREFERENCE:
+                candidates = sorted(sub.loc[sub["kind"] == kind, "path"])
+                if candidates:
+                    row["thumb_url"] = HF_BASE + candidates[0]
+                    break
 
     try:
         files = _payload_files(asset_dir)
         if not files:
             row["parse_status"] = "no_payloads"
             return row, mesh_rows, val_rows, mat_rows
-        primary = next(
-            (f for f in files if f.name == "instances_physx.usda"), files[0]
-        )
+        primary = _select_physics_payload(files)
+        if primary is None:
+            row["parse_status"] = "no_physics_payload"
+            row["parse_error"] = (
+                "no known physics payload among: "
+                + ", ".join(sorted(f.name for f in files))
+            )[:200]
+            return row, mesh_rows, val_rows, mat_rows
         doc = parse_usda.parse_usda_text(
             primary.read_text(encoding="utf-8", errors="replace")
         )

@@ -130,7 +130,8 @@ def parse_usda_text(text):
     meshes = parse_meshes(text)
     joints = detect_joints(text)
     validation = parse_validation(text)
-    total_mass = sum(m["mass_kg"] for m in meshes if m["mass_kg"] is not None)
+    mass_values = [m["mass_kg"] for m in meshes if m["mass_kg"] is not None]
+    total_mass = sum(mass_values) if mass_values else None
     rigid = sum(
         1
         for m in meshes

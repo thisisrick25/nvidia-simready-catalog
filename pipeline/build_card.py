@@ -56,6 +56,20 @@ def render_card(stats) -> str:
         ]
     physics_table = _table(physics_rows, ["Mass (per-asset sum)", "Value"]) if physics_rows else "_No mass data parsed._"
 
+    outliers_n = stats.get("mass_outliers_count") or 0
+    outlier_note = ""
+    if outliers_n:
+        threshold = stats.get("mass_outlier_threshold_kg", 0)
+        pct = stats.get("mass_outliers_pct", 0)
+        outlier_note = (
+            f"\n> [!WARNING]\n"
+            f"> **Known data quality note:** {_fmt_int(outliers_n)} assets ({pct}%) report a "
+            f"summed mass above {threshold:g} kg (e.g. warehouse structural modules, an exhaust "
+            f"manifold at ~500,000 kg) — these look like authoring/export defects in NVIDIA's "
+            f"source USD rather than real weights. We report the numbers as-is, unmodified; use "
+            f"the **median** above rather than the mean when reasoning about a typical asset.\n"
+        )
+
     heaviest = _table(
         [[a, f"{m:g}"] for a, m in (stats.get("heaviest10") or [])],
         ["Asset", "Mass (kg)"],
@@ -157,7 +171,7 @@ Asset names follow `<category>_<type>_<variant>` (e.g. `food_produce_banana_m01`
 Per-mesh physics properties (`physics:mass`, `physics:centerOfMass`, `physics:diagonalInertia`, collision `physics:approximation`) are authored in the `instances_*.usda` payloads. Asset mass below is the sum of per-mesh masses from the PhysX instance file.
 
 {physics_table}
-
+{outlier_note}
 Collision approximations in use: {approx_str}
 
 ![Mass distribution](assets/mass_hist.png)

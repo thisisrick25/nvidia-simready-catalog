@@ -26,8 +26,21 @@ def classify(path: str) -> str:
     if "/simready_usd/" in p and base.startswith("sm_") and base.endswith(".usd"):
         return "sm_usd"
     if "/.thumbs/" in p:
+        # Real NVIDIA thumbnail filenames (verified against production data):
+        # sm_<name>.usd.png (default render), sm_<name>.usd_light.png,
+        # sm_<name>.usd_transparent.png, sm_<name>_thumbnail.png (composite).
+        # None of these contain the word "lit"/"unlit" - that distinction
+        # does not exist in the real dataset.
+        if base.endswith("_thumbnail.png"):
+            return "thumb_composite"
+        if base.endswith(".usd_light.png"):
+            return "thumb_light"
+        if base.endswith(".usd_transparent.png"):
+            return "thumb_transparent"
+        if base.endswith(".usd.png"):
+            return "thumb_default"
         if base.endswith(".png"):
-            return "thumb_unlit" if "unlit" in base else "thumb_lit"
+            return "thumb_other"
         return "thumb_other"
     if "/textures/" in p:
         return "texture"

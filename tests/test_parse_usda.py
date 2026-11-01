@@ -53,6 +53,36 @@ def test_joints_and_materials():
     assert doc["materials"] == ["m_opaque__organic__banana_m01"]
 
 
+def test_total_mass_none_when_no_mesh_has_mass():
+    text = (
+        "#usda 1.0\n"
+        "def Xform \"part_a\"\n"
+        "{\n"
+        "    def Xform \"inner\"\n"
+        "    {\n"
+        "    }\n"
+        "}\n"
+    )
+    doc = parse_usda_text(text)
+    assert doc["mesh_count"] == 2
+    assert all(m["mass_kg"] is None for m in doc["meshes"])
+    assert doc["total_mass_kg"] is None
+
+
+def test_total_mass_zero_when_mesh_explicitly_massless():
+    text = (
+        "#usda 1.0\n"
+        "def Xform \"part_a\"\n"
+        "{\n"
+        "    float physics:mass = 0\n"
+        "}\n"
+    )
+    doc = parse_usda_text(text)
+    assert doc["mesh_count"] == 1
+    assert doc["meshes"][0]["mass_kg"] == 0.0
+    assert doc["total_mass_kg"] == 0.0
+
+
 def test_taxonomy_and_shader():
     t = taxonomy("simready_content\\common_assets\\props_food\\food_produce_banana_m01\\simready_physx_usd\\sm.usd")
     assert t["root"] == "common_assets"
