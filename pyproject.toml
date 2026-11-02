@@ -17,6 +17,7 @@ dependencies = [
 dev = [
     "gradio>=6.0",
     "pytest>=8",
+    "spaces",
 ]
 
 [tool.setuptools]
