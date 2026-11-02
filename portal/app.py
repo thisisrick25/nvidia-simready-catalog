@@ -29,6 +29,28 @@ assets = load("assets")
 validation = load("validation")
 stats = load_stats()
 
+for column in (
+    "conformance_versions",
+    "conformance_profile",
+    "package_format_version",
+    "provenance_tool",
+    "provenance_generated_date",
+    "provenance_exported_date",
+):
+    if column not in assets:
+        assets[column] = ""
+for column in (
+    "metadata_file_count",
+    "bom_entry_count",
+    "bom_hash_count",
+    "package_hash_count",
+    "geometry_size_bytes",
+    "texture_size_bytes",
+    "source_asset_size_bytes",
+):
+    if column not in assets:
+        assets[column] = 0
+
 vc = stats.get("variant_counts") or {}
 metrics_md = (
     f"**Assets:** {len(assets):,} · "
@@ -95,18 +117,55 @@ def build_mass_histogram():
 
 
 DISPLAY_COLUMNS = [
+    "thumb_url",
     "asset",
     "asset_type",
     "taxonomy_group",
+    "conformance_versions",
+    "conformance_profile",
+    "metadata_file_count",
+    "bom_entry_count",
+    "bom_hash_count",
+    "package_hash_count",
+    "package_format_version",
+    "provenance_tool",
+    "provenance_generated_date",
+    "provenance_exported_date",
     "mass_kg",
     "rigid_body_count",
     "has_articulation",
     "features_passed",
     "features_total",
     "size_total_bytes",
+    "geometry_size_bytes",
+    "texture_size_bytes",
+    "source_asset_size_bytes",
 ]
+DISPLAY_DATATYPES = ["markdown"] + ["str"] * (len(DISPLAY_COLUMNS) - 1)
 
 groups = sorted(assets["taxonomy_group"].dropna().unique().tolist())
+
+
+def format_asset_table(view):
+    display = view[DISPLAY_COLUMNS].copy()
+    display["thumb_url"] = display["thumb_url"].apply(
+        lambda url: f"![thumbnail]({url})" if pd.notna(url) and url else ""
+    )
+    display["mass_kg"] = display["mass_kg"].apply(lambda x: f"{x:.3g}" if pd.notna(x) else "")
+    display["size_total_bytes"] = display["size_total_bytes"].apply(
+        lambda x: f"{int(x):,}" if pd.notna(x) else ""
+    )
+    for column in (
+        "geometry_size_bytes",
+        "texture_size_bytes",
+        "source_asset_size_bytes",
+    ):
+        display[column] = display[column].apply(
+            lambda x: f"{int(x):,}" if pd.notna(x) else ""
+        )
+    return display.rename(
+        columns={"thumb_url": "thumbnail", "size_total_bytes": "size (B)"}
+    )
 
 
 def filter_assets(categories, query):
@@ -115,13 +174,12 @@ def filter_assets(categories, query):
         view = view[view["taxonomy_group"].isin(categories)]
     if query:
         view = view[view["asset"].str.contains(query, case=False, na=False, regex=False)]
-    display = view[DISPLAY_COLUMNS].copy()
-    display["mass_kg"] = display["mass_kg"].apply(lambda x: f"{x:.3g}" if pd.notna(x) else "")
-    display["size_total_bytes"] = display["size_total_bytes"].apply(
-        lambda x: f"{int(x):,}" if pd.notna(x) else ""
+    display = format_asset_table(view)
+    return gr.Dataframe(
+        value=display,
+        datatype=DISPLAY_DATATYPES,
+        label=f"{len(view)} assets",
     )
-    display = display.rename(columns={"size_total_bytes": "size (B)"})
-    return gr.Dataframe(value=display, label=f"{len(view)} assets")
 
 
 def get_fail_assets():
@@ -161,7 +219,8 @@ with gr.Blocks(title="SimReady Assets Explorer") as demo:
             )
             search_box = gr.Textbox(label="Search asset name", interactive=True)
         asset_table = gr.Dataframe(
-            value=assets[DISPLAY_COLUMNS].rename(columns={"size_total_bytes": "size (B)"}),
+            value=format_asset_table(assets),
+            datatype=DISPLAY_DATATYPES,
             label=f"{len(assets)} assets",
             interactive=False,
         )
