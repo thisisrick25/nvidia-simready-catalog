@@ -1,10 +1,14 @@
 import json
+import logging
 from pathlib import Path
 
 import pandas as pd
 
 from pipeline import parse_packaging, parse_usda, parse_usdc
 from pipeline.config import CACHE_DIR, DATA_DIR, HF_BASE
+
+logger = logging.getLogger(__name__)
+MAX_ERROR_LEN = 200
 
 ASSET_COLUMNS = [
     "asset", "asset_type", "uuid", "asset_location", "taxonomy_root",
@@ -58,6 +62,20 @@ def _select_physics_payload(files):
     return None
 
 
+MESH_COLUMNS = [
+    "asset", "mesh", "mass_kg", "center_of_mass", "diagonal_inertia",
+    "approximation", "material", "api_schemas",
+]
+
+VALIDATION_COLUMNS = [
+    "asset", "feature", "version", "passed", "failing_requirements",
+    "dependencies", "validated_date", "profile",
+]
+
+MATERIAL_COLUMNS = [
+    "asset", "material", "shader_class", "semantic_tokens", "base_name",
+]
+
 THUMB_KINDS_BY_PREFERENCE = (
     "thumb_default", "thumb_light", "thumb_transparent", "thumb_composite", "thumb_other",
 )
@@ -73,6 +91,71 @@ def _base_name(material_name):
     return parts[-1] if len(parts) > 1 else material_name
 
 
+def _resolve_inventory(row, inv, name):
+    if inv is None or inv.empty:
+        return
+    sub = inv[inv["asset"] == name]
+    if sub.empty:
+        return
+    row["size_total_bytes"] = int(sub["size"].sum())
+    row["size_payload_bytes"] = int(sub.loc[sub["kind"] == "payload_usda", "size"].sum())
+    for kind in THUMB_KINDS_BY_PREFERENCE:
+        candidates = sorted(sub.loc[sub["kind"] == kind, "path"])
+        if candidates:
+            row["thumb_url"] = HF_BASE + candidates[0]
+            break
+
+
+def _merge_base_data(doc, asset_dir):
+    base = asset_dir / "simready_usd" / "payloads" / "base.usda"
+    if not base.is_file():
+        return
+    b = parse_usda.parse_usda_text(
+        base.read_text(encoding="utf-8", errors="replace")
+    )
+    if b["has_articulation"]:
+        doc["has_articulation"] = True
+    merged = dict(b["joint_types"])
+    merged.update(doc["joint_types"])
+    doc["joint_types"] = merged
+
+
+def _extract_validation_rows(name, validation):
+    rows = []
+    for f in validation["features"]:
+        rows.append(
+            {
+                "asset": name,
+                "feature": f["feature"],
+                "version": f["version"],
+                "passed": f["passed"],
+                "failing_requirements": f["failing_requirements"],
+                "dependencies": f["dependencies"],
+                "validated_date": validation["validated_date"],
+                "profile": validation["profile"],
+            }
+        )
+    return rows
+
+
+def _extract_packaging(asset_dir):
+    pkg_path = asset_dir / "com.nvidia.simready.packaging.json"
+    if not pkg_path.is_file():
+        return {}
+    pkg = parse_packaging.parse_packaging(
+        pkg_path.read_text(encoding="utf-8", errors="replace")
+    )
+    if not pkg:
+        return {}
+    return {
+        "license": pkg.get("license"),
+        "package_id": pkg.get("package_id"),
+        "packaged_date": parse_packaging.deploy_date_from_package_id(
+            pkg.get("package_id")
+        ),
+    }
+
+
 def extract_asset(asset_dir: Path, inv: pd.DataFrame):
     name = asset_dir.name
     row = {c: None for c in ASSET_COLUMNS}
@@ -84,16 +167,7 @@ def extract_asset(asset_dir: Path, inv: pd.DataFrame):
     )
     mesh_rows, val_rows, mat_rows = [], [], []
 
-    if inv is not None and len(inv):
-        sub = inv[inv["asset"] == name]
-        if len(sub):
-            row["size_total_bytes"] = int(sub["size"].sum())
-            row["size_payload_bytes"] = int(sub.loc[sub["kind"] == "payload_usda", "size"].sum())
-            for kind in THUMB_KINDS_BY_PREFERENCE:
-                candidates = sorted(sub.loc[sub["kind"] == kind, "path"])
-                if candidates:
-                    row["thumb_url"] = HF_BASE + candidates[0]
-                    break
+    _resolve_inventory(row, inv, name)
 
     try:
         files = _payload_files(asset_dir)
@@ -106,21 +180,12 @@ def extract_asset(asset_dir: Path, inv: pd.DataFrame):
             row["parse_error"] = (
                 "no known physics payload among: "
                 + ", ".join(sorted(f.name for f in files))
-            )[:200]
+            )[:MAX_ERROR_LEN]
             return row, mesh_rows, val_rows, mat_rows
         doc = parse_usda.parse_usda_text(
             primary.read_text(encoding="utf-8", errors="replace")
         )
-        base = asset_dir / "simready_usd" / "payloads" / "base.usda"
-        if base.is_file():
-            b = parse_usda.parse_usda_text(
-                base.read_text(encoding="utf-8", errors="replace")
-            )
-            if b["has_articulation"]:
-                doc["has_articulation"] = True
-            merged = dict(b["joint_types"])
-            merged.update(doc["joint_types"])
-            doc["joint_types"] = merged
+        _merge_base_data(doc, asset_dir)
 
         tax = parse_usda.taxonomy(doc["asset_location"])
         row.update(
@@ -172,19 +237,7 @@ def extract_asset(asset_dir: Path, inv: pd.DataFrame):
         )
         fails = sorted({f["feature"] for f in v["features"] if not f["passed"]})
         row["failing_features"] = ", ".join(fails) if fails else None
-        for f in v["features"]:
-            val_rows.append(
-                {
-                    "asset": name,
-                    "feature": f["feature"],
-                    "version": f["version"],
-                    "passed": f["passed"],
-                    "failing_requirements": f["failing_requirements"],
-                    "dependencies": f["dependencies"],
-                    "validated_date": v["validated_date"],
-                    "profile": v["profile"],
-                }
-            )
+        val_rows = _extract_validation_rows(name, v)
         for m in doc["meshes"]:
             mesh_rows.append(
                 {
@@ -208,26 +261,17 @@ def extract_asset(asset_dir: Path, inv: pd.DataFrame):
                     "base_name": _base_name(mname),
                 }
             )
-        pkg_path = asset_dir / "com.nvidia.simready.packaging.json"
-        if pkg_path.is_file():
-            pkg = parse_packaging.parse_packaging(
-                pkg_path.read_text(encoding="utf-8", errors="replace")
-            )
-            if pkg:
-                row["license"] = pkg.get("license")
-                row["package_id"] = pkg.get("package_id")
-                row["packaged_date"] = parse_packaging.deploy_date_from_package_id(
-                    pkg.get("package_id")
-                )
+        row.update(_extract_packaging(asset_dir))
         sm = sorted((asset_dir / "simready_usd").glob("sm_*.usd"))
         if sm:
             info = parse_usdc.parse_sm_usd(sm[0])
             if info:
                 row["asset_info_mass_kg"] = info.get("mass_kg")
                 row["asset_info_category"] = info.get("category")
-    except Exception as e:  # never fail the whole run for one asset
+    except Exception as e:
         row["parse_status"] = "parse_error"
-        row["parse_error"] = str(e)[:200]
+        row["parse_error"] = str(e)[:MAX_ERROR_LEN]
+        logger.warning("parse error for %s: %s", name, e)
     return row, mesh_rows, val_rows, mat_rows
 
 
@@ -244,9 +288,9 @@ def extract_all(cache_root, inv, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
     assets = pd.DataFrame(asset_rows, columns=ASSET_COLUMNS)
     assets.to_parquet(out_dir / "assets.parquet")
-    pd.DataFrame(mesh_all).to_parquet(out_dir / "meshes.parquet")
-    pd.DataFrame(val_all).to_parquet(out_dir / "validation.parquet")
-    pd.DataFrame(mat_all).to_parquet(out_dir / "materials.parquet")
+    pd.DataFrame(mesh_all, columns=MESH_COLUMNS if not mesh_all else None).to_parquet(out_dir / "meshes.parquet")
+    pd.DataFrame(val_all, columns=VALIDATION_COLUMNS if not val_all else None).to_parquet(out_dir / "validation.parquet")
+    pd.DataFrame(mat_all, columns=MATERIAL_COLUMNS if not mat_all else None).to_parquet(out_dir / "materials.parquet")
     return assets
 
 
@@ -254,8 +298,8 @@ def main():
     inv = pd.read_parquet(DATA_DIR / "inventory.parquet")
     assets = extract_all(CACHE_DIR / "simready-assets", inv, DATA_DIR)
     counts = assets["parse_status"].value_counts().to_dict()
-    print(f"extracted {len(assets)} assets -> {DATA_DIR}")
-    print(f"parse_status: {counts}")
+    logger.info("extracted %d assets -> %s", len(assets), DATA_DIR)
+    logger.info("parse_status: %s", counts)
 
 
 if __name__ == "__main__":

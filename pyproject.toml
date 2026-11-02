@@ -1,0 +1,23 @@
+[project]
+name = "simready-catalog"
+version = "0.1.0"
+description = "Community-built catalog and analysis pipeline for NVIDIA SimReady Assets"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "huggingface_hub>=0.26",
+    "pandas>=2.2",
+    "pyarrow>=18",
+    "matplotlib>=3.9",
+    "numpy>=1.26",
+    "pillow>=10",
+]
+
+[project.optional-dependencies]
+dev = [
+    "streamlit>=1.40",
+    "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

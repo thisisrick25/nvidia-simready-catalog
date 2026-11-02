@@ -1,11 +1,14 @@
 import ast
 import json
+import logging
 from collections import Counter
 from datetime import date
 
 import pandas as pd
 
 from pipeline.config import DATA_DIR
+
+logger = logging.getLogger(__name__)
 
 # Heuristic ceiling for a single asset's summed mass. A handful of upstream
 # NVIDIA payload files carry physically implausible physics:mass values
@@ -38,6 +41,8 @@ def compute_stats(assets, meshes, validation, inventory):
 
     vc = Counter()
     for v in assets["variants"].dropna():
+        if isinstance(v, str):
+            v = ast.literal_eval(v)
         vc.update(v)
     stats["variant_counts"] = dict(vc)
 
@@ -137,9 +142,9 @@ def main():
     (DATA_DIR / "stats.json").write_text(
         json.dumps(stats, indent=2), encoding="utf-8"
     )
-    print(
-        f"stats -> {DATA_DIR / 'stats.json'} "
-        f"({stats['n_assets']} assets, {stats['n_categories']} categories)"
+    logger.info(
+        "stats -> %s (%d assets, %d categories)",
+        DATA_DIR / "stats.json", stats["n_assets"], stats["n_categories"],
     )
     return stats
 

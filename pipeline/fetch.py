@@ -1,9 +1,13 @@
 import argparse
+import logging
+import sys
 
 import pandas as pd
 from huggingface_hub import snapshot_download
 
 from pipeline.config import CACHE_DIR, DATA_DIR, REPO_ID
+
+logger = logging.getLogger(__name__)
 
 ALLOW_PATTERNS = [
     "*/simready_usd/payloads/*.usda",
@@ -22,7 +26,10 @@ def patterns_for_limit(inventory: pd.DataFrame, limit: int) -> list:
 def fetch(limit=None):
     patterns = list(ALLOW_PATTERNS)
     if limit is not None:
-        inv = pd.read_parquet(DATA_DIR / "inventory.parquet")
+        inv_path = DATA_DIR / "inventory.parquet"
+        if not inv_path.exists():
+            sys.exit("Run 'python -m pipeline.inventory' first, or run without --limit")
+        inv = pd.read_parquet(inv_path)
         patterns = patterns_for_limit(inv, limit)
     path = snapshot_download(
         repo_id=REPO_ID,
@@ -47,7 +54,7 @@ def main():
             print(ALLOW_PATTERNS)
         return
     path = fetch(limit=args.limit)
-    print(f"fetched to {path}")
+    logger.info("fetched to %s", path)
 
 
 if __name__ == "__main__":

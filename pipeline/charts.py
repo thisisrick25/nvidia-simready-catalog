@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 
 import matplotlib
@@ -10,6 +11,7 @@ import pandas as pd
 
 from pipeline.config import DATA_DIR
 
+logger = logging.getLogger(__name__)
 NVIDIA_GREEN = "#76b900"
 
 
@@ -37,9 +39,10 @@ def make_charts(assets, stats, outdir):
 
     if "mass_kg" in assets:
         mass = pd.to_numeric(assets["mass_kg"], errors="coerce").dropna()
+        mass = mass[mass > 0]
         if len(mass):
             fig, ax = plt.subplots(figsize=(8, 4.5))
-            lo = max(float(mass.min()), 1e-4)
+            lo = float(mass.min())
             bins = np.logspace(np.log10(lo), np.log10(float(mass.max()) * 1.01), 40)
             ax.hist(mass, bins=bins, color=NVIDIA_GREEN)
             ax.set_xscale("log")
@@ -100,7 +103,7 @@ def main():
     stats = json.loads((DATA_DIR / "stats.json").read_text(encoding="utf-8"))
     outdir = DATA_DIR.parent / "card" / "assets"
     created = make_charts(assets, stats, outdir)
-    print(f"charts -> {len(created)} files in {outdir}")
+    logger.info("charts -> %d files in %s", len(created), outdir)
 
 
 if __name__ == "__main__":

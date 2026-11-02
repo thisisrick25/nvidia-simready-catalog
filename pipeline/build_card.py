@@ -1,7 +1,10 @@
 import json
+import logging
 from pathlib import Path
 
 from pipeline.config import CARD_DIR, DATA_DIR
+
+logger = logging.getLogger(__name__)
 
 
 def _fmt_int(n):
@@ -29,7 +32,7 @@ def render_card(stats) -> str:
     size = stats.get("size_mb_stats") or {}
 
     total_gb = stats.get('total_size_gb', 0)
-    total_gb_str = f"{int(total_gb)}" if total_gb == int(total_gb) else f"{total_gb:g}"
+    total_gb_str = f"{total_gb:g}"
     at_a_glance = _table(
         [
             ["Assets", _fmt_int(n)],
@@ -258,7 +261,7 @@ def main():
     md = render_card(stats)
     CARD_DIR.mkdir(parents=True, exist_ok=True)
     (CARD_DIR / "README.md").write_text(md, encoding="utf-8")
-    print(f"card -> {CARD_DIR / 'README.md'} ({len(md)} chars)")
+    logger.info("card -> %s (%d chars)", CARD_DIR / "README.md", len(md))
 
 
 if __name__ == "__main__":

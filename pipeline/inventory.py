@@ -1,9 +1,12 @@
+import logging
 from pathlib import Path
 
 import pandas as pd
 
 from pipeline.config import DATA_DIR
 from pipeline.hf_client import iter_repo_files
+
+logger = logging.getLogger(__name__)
 
 
 def asset_of(path: str) -> str:
@@ -71,8 +74,8 @@ def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     out = DATA_DIR / "inventory.parquet"
     df.to_parquet(out)
-    n_assets = df["asset"].nunique() - (df["asset"] == "__root__").any()
-    print(f"inventory: {len(df)} files, {n_assets} assets, {df['size'].sum() / 1e9:.2f} GB -> {out}")
+    n_assets = df.loc[df["asset"] != "__root__", "asset"].nunique()
+    logger.info("inventory: %d files, %d assets, %.2f GB -> %s", len(df), n_assets, df["size"].sum() / 1e9, out)
 
 
 if __name__ == "__main__":

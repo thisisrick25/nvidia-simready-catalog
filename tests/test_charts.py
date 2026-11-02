@@ -21,6 +21,14 @@ def test_make_charts_creates_pngs(tmp_path):
         assert p.exists() and p.stat().st_size > 1000
 
 
+def test_make_charts_with_zero_mass(tmp_path):
+    assets = pd.DataFrame({"mass_kg": [0.0, 0.2, 1.0], "size_total_bytes": [1e6, 2e6, 3e6]})
+    created = make_charts(assets, _stats(), tmp_path)
+    names = {p.name for p in created}
+    assert "mass_hist.png" in names
+    assert (tmp_path / "mass_hist.png").stat().st_size > 1000
+
+
 def test_make_charts_empty_inputs(tmp_path):
     created = make_charts(pd.DataFrame(dtype=float), {}, tmp_path)
     assert created == []

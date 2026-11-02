@@ -18,7 +18,12 @@ def load(name):
 
 assets = load("assets")
 validation = load("validation")
-stats = json.loads((DATA / "stats.json").read_text(encoding="utf-8"))
+@st.cache_data
+def load_stats():
+    return json.loads((DATA / "stats.json").read_text(encoding="utf-8"))
+
+
+stats = load_stats()
 
 st.title("SimReady Assets Explorer")
 st.caption(
@@ -117,7 +122,7 @@ with tab_validation:
         ]
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
     st.subheader("Assets with failing features")
-    fail_assets = assets[assets["all_features_passed"] == False]["asset"].tolist()
+    fail_assets = assets[assets["all_features_passed"].eq(False)]["asset"].tolist()
     st.write(f"{len(fail_assets)} of {len(assets)} assets have at least one failing feature")
     sel = st.selectbox("Inspect asset", fail_assets)
     if sel:

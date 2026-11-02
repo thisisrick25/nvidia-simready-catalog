@@ -68,7 +68,7 @@ def parse_meshes(text):
     meshes = []
     parts = re.split(r"\n\s*def Xform \"", text)
     for part in parts[1:]:
-        name = part[: part.index('"')]
+        name = part.split('"', 1)[0]
         com = re.search(r"point3f physics:centerOfMass = \(([^)]*)\)", part)
         inertia = re.search(r"float3f physics:diagonalInertia = \(([^)]*)\)", part)
         meshes.append(
@@ -96,13 +96,9 @@ def detect_joints(text):
 
 
 def parse_materials(text):
-    seen = []
     bindings = re.findall(r"material:[Bb]inding = <[^>]*?/([A-Za-z0-9_]+)>", text)
     defs = re.findall(r'def Material "([^"]+)"', text)
-    for n in list(bindings) + list(defs):
-        if n not in seen:
-            seen.append(n)
-    return seen
+    return list(dict.fromkeys(list(bindings) + list(defs)))
 
 
 def taxonomy(asset_location):
