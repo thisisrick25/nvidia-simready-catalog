@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 DOWNLOAD_ATTEMPTS = 3
 RETRY_DELAY_SECONDS = 10
+DOWNLOAD_WORKERS = 4
 
 ALLOW_PATTERNS = [
     "*/simready_usd/payloads/instances_physx.usda",
@@ -49,6 +50,7 @@ def fetch(limit=None):
                 revision="main",
                 local_dir=CACHE_DIR / "simready-assets",
                 allow_patterns=patterns,
+                max_workers=DOWNLOAD_WORKERS,
             )
         except (HfHubHTTPError, LocalEntryNotFoundError) as exc:
             if attempt == DOWNLOAD_ATTEMPTS:
