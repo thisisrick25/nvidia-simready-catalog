@@ -1,6 +1,6 @@
 # Website Integration Snippets
 
-## Iframe Embed (Streamlit Portal)
+## Iframe Embed (Gradio Portal)
 
 Drop this into any page to embed the live interactive dashboard:
 

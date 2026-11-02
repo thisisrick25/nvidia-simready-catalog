@@ -11,7 +11,7 @@ This project fills that gap. A seven-stage Python pipeline inventories the Huggi
 repo, selectively downloads only the small text payloads (~300 MB out of 490 GB),
 parses every asset's physics and validation metadata, and produces a full
 [HuggingFace dataset card](card/README.md), summary statistics, charts, an
-interactive [Streamlit portal](portal/app.py), and publishes everything to
+interactive [Gradio portal](portal/app.py), and publishes everything to
 HuggingFace.
 
 ## Key Findings
@@ -114,7 +114,7 @@ simready-catalog/
 │   ├── charts.py          # Stage 5: matplotlib chart generation
 │   ├── build_card.py      # Stage 6: render HF dataset card
 │   └── publish.py         # Stage 7: upload to HuggingFace
-├── portal/                # Streamlit interactive explorer
+├── portal/                # Gradio interactive explorer
 │   ├── app.py             # Dashboard UI
 │   └── data/              # Self-contained data copy for HF Space deployment
 ├── card/                  # Generated dataset card + chart images
@@ -176,7 +176,7 @@ examples (Isaac Sim, usd-core Python, MuJoCo), BibTeX citation, and license info
 ### Stage 7 -- Publish
 
 `publish.py` uploads the generated artifacts to HuggingFace. It publishes the
-dataset card and Parquet tables as a HF dataset, and the Streamlit portal as a
+dataset card and Parquet tables as a HF dataset, and the Gradio portal as a
 HF Space. Requires a write-access `HF_TOKEN`.
 
 ```bash
@@ -185,7 +185,7 @@ python -m pipeline.publish --namespace thisisrick25 --what both
 
 ## Portal
 
-The Streamlit portal (`portal/app.py`) provides an interactive dashboard for
+The Gradio portal (`portal/app.py`) provides an interactive dashboard for
 exploring the catalog:
 
 - **Overview tab**: category distribution, mass histogram, variant coverage, and
@@ -203,7 +203,7 @@ as a standalone HuggingFace Space without the rest of the repo.
 Run locally:
 
 ```bash
-streamlit run portal/app.py
+python portal/app.py
 ```
 
 ## Testing

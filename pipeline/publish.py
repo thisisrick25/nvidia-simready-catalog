@@ -48,7 +48,7 @@ def publish_space(namespace: str, api: HfApi) -> str:
     repo_id = f"{namespace}/nvidia-simready-catalog"
     logger.info("publishing space to %s", repo_id)
     api.create_repo(
-        repo_id, repo_type="space", space_sdk="streamlit", exist_ok=True
+        repo_id, repo_type="space", space_sdk="gradio", exist_ok=True
     )
     api.upload_folder(
         folder_path=str(ROOT / "portal"),
