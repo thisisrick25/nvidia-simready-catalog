@@ -1,13 +1,18 @@
 import argparse
 import logging
 import sys
+import time
 
 import pandas as pd
+from huggingface_hub.errors import HfHubHTTPError, LocalEntryNotFoundError
 from huggingface_hub import snapshot_download
 
 from pipeline.config import CACHE_DIR, DATA_DIR, REPO_ID
 
 logger = logging.getLogger(__name__)
+
+DOWNLOAD_ATTEMPTS = 3
+RETRY_DELAY_SECONDS = 10
 
 ALLOW_PATTERNS = [
     "*/simready_usd/payloads/*.usda",
@@ -31,14 +36,28 @@ def fetch(limit=None):
             sys.exit("Run 'python -m pipeline.inventory' first, or run without --limit")
         inv = pd.read_parquet(inv_path)
         patterns = patterns_for_limit(inv, limit)
-    path = snapshot_download(
-        repo_id=REPO_ID,
-        repo_type="dataset",
-        revision="main",
-        local_dir=CACHE_DIR / "simready-assets",
-        allow_patterns=patterns,
-    )
-    return path
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            return snapshot_download(
+                repo_id=REPO_ID,
+                repo_type="dataset",
+                revision="main",
+                local_dir=CACHE_DIR / "simready-assets",
+                allow_patterns=patterns,
+            )
+        except (HfHubHTTPError, LocalEntryNotFoundError) as exc:
+            if attempt == DOWNLOAD_ATTEMPTS:
+                logger.error("Hugging Face download failed after %d attempts", attempt)
+                raise
+            delay = RETRY_DELAY_SECONDS * attempt
+            logger.warning(
+                "Hugging Face download attempt %d/%d failed: %s; retrying in %d seconds",
+                attempt,
+                DOWNLOAD_ATTEMPTS,
+                exc,
+                delay,
+            )
+            time.sleep(delay)
 
 
 def main():
