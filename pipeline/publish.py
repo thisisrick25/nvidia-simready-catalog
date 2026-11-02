@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-from huggingface_hub import HfApi, get_token
+from huggingface_hub import HfApi, SpaceHardware, get_token
 
 from pipeline.config import CARD_DIR, DATA_DIR, ROOT
 
@@ -48,8 +48,13 @@ def publish_space(namespace: str, api: HfApi) -> str:
     repo_id = f"{namespace}/nvidia-simready-catalog"
     logger.info("publishing space to %s", repo_id)
     api.create_repo(
-        repo_id, repo_type="space", space_sdk="gradio", exist_ok=True
+        repo_id,
+        repo_type="space",
+        space_sdk="gradio",
+        space_hardware=SpaceHardware.CPU_BASIC,
+        exist_ok=True,
     )
+    api.request_space_hardware(repo_id, hardware=SpaceHardware.CPU_BASIC)
     api.upload_folder(
         folder_path=str(ROOT / "portal"),
         repo_id=repo_id,
