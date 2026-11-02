@@ -30,7 +30,7 @@ jobs:
       - name: Publish to HuggingFace
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python -m pipeline.publish --namespace nvidia-simready-catalog --what both
+        run: python -m pipeline.publish --namespace thisisrick25 --what both
 
       - name: Commit regenerated artifacts
         run: |

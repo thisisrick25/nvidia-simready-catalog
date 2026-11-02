@@ -6,9 +6,9 @@ from pipeline.publish import publish_dataset, publish_space, require_token
 def test_publish_dataset_creates_repo_and_uploads():
     api = MagicMock()
     result = publish_dataset("myns", api)
-    assert result == "myns/simready-assets-catalog"
+    assert result == "myns/nvidia-simready-catalog"
     api.create_repo.assert_called_once_with(
-        "myns/simready-assets-catalog", repo_type="dataset", exist_ok=True,
+        "myns/nvidia-simready-catalog", repo_type="dataset", exist_ok=True,
     )
     api.upload_file.assert_called_once()
     api.upload_folder.assert_called_once()
@@ -20,9 +20,9 @@ def test_publish_dataset_creates_repo_and_uploads():
 def test_publish_space_creates_repo_and_uploads():
     api = MagicMock()
     result = publish_space("myns", api)
-    assert result == "myns/simready-assets-portal"
+    assert result == "myns/nvidia-simready-catalog"
     api.create_repo.assert_called_once_with(
-        "myns/simready-assets-portal",
+        "myns/nvidia-simready-catalog",
         repo_type="space", space_sdk="streamlit", exist_ok=True,
     )
     api.upload_folder.assert_called_once()

@@ -180,7 +180,7 @@ dataset card and Parquet tables as a HF dataset, and the Streamlit portal as a
 HF Space. Requires a write-access `HF_TOKEN`.
 
 ```bash
-python -m pipeline.publish --namespace nvidia-simready-catalog --what both
+python -m pipeline.publish --namespace thisisrick25 --what both
 ```
 
 ## Portal

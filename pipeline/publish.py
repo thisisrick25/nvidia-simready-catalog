@@ -10,7 +10,7 @@ from pipeline.config import CARD_DIR, DATA_DIR, ROOT
 logger = logging.getLogger(__name__)
 
 DEFAULT_NAMESPACE = os.environ.get(
-    "SIMREADY_HF_NAMESPACE", "nvidia-simready-catalog"
+    "SIMREADY_HF_NAMESPACE", "thisisrick25"
 )
 
 
@@ -25,7 +25,7 @@ def require_token():
 
 
 def publish_dataset(namespace: str, api: HfApi) -> str:
-    repo_id = f"{namespace}/simready-assets-catalog"
+    repo_id = f"{namespace}/nvidia-simready-catalog"
     logger.info("publishing dataset to %s", repo_id)
     api.create_repo(repo_id, repo_type="dataset", exist_ok=True)
     api.upload_file(
@@ -45,7 +45,7 @@ def publish_dataset(namespace: str, api: HfApi) -> str:
 
 
 def publish_space(namespace: str, api: HfApi) -> str:
-    repo_id = f"{namespace}/simready-assets-portal"
+    repo_id = f"{namespace}/nvidia-simready-catalog"
     logger.info("publishing space to %s", repo_id)
     api.create_repo(
         repo_id, repo_type="space", space_sdk="streamlit", exist_ok=True

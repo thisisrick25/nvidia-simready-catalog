@@ -6,7 +6,7 @@ Drop this into any page to embed the live interactive dashboard:
 
 ```html
 <iframe
-  src="https://huggingface.co/spaces/nvidia-simready-catalog/simready-assets-portal"
+  src="https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog"
   frameborder="0"
   width="100%"
   height="800"
@@ -21,8 +21,8 @@ Drop this into any page to embed the live interactive dashboard:
 ```html
 <div class="simready-links">
   <a href="https://github.com/thisisrick25/nvidia-simready-catalog">GitHub</a>
-  <a href="https://huggingface.co/datasets/nvidia-simready-catalog/simready-assets-catalog">HF Dataset</a>
-  <a href="https://huggingface.co/spaces/nvidia-simready-catalog/simready-assets-portal">HF Portal</a>
+  <a href="https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog">HF Dataset</a>
+  <a href="https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog">HF Portal</a>
 </div>
 ```
 
@@ -33,7 +33,7 @@ Fetch `stats.json` at build time to show when the catalog was last regenerated:
 ```tsx
 // In getStaticProps or a server component
 const STATS_URL =
-  "https://huggingface.co/datasets/nvidia-simready-catalog/simready-assets-catalog/resolve/main/stats.json";
+  "https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog/resolve/main/stats.json";
 
 export async function getStaticProps() {
   const res = await fetch(STATS_URL);
@@ -58,7 +58,7 @@ For App Router (React Server Component):
 
 ```tsx
 const STATS_URL =
-  "https://huggingface.co/datasets/nvidia-simready-catalog/simready-assets-catalog/resolve/main/stats.json";
+  "https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog/resolve/main/stats.json";
 
 export default async function CatalogBadge() {
   const stats = await fetch(STATS_URL, { next: { revalidate: 86400 } }).then(
