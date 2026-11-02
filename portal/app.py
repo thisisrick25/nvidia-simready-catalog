@@ -200,11 +200,11 @@ Credit: NVIDIA SimReady Assets — https://huggingface.co/datasets/nvidia/simrea
 """
         )
 
-@spaces.GPU
-def _gpu_warmup():
-    return "ok"
+    @spaces.GPU
+    def _gpu_warmup():
+        return "ok"
 
-demo.load(fn=_gpu_warmup)
+    demo.load(fn=_gpu_warmup)
 
 if __name__ == "__main__":
     demo.launch()
