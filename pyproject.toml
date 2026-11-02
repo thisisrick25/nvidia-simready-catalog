@@ -3,7 +3,7 @@ name = "simready-catalog"
 version = "0.1.0"
 description = "Community-built catalog and analysis pipeline for NVIDIA SimReady Assets"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "MIT"
 dependencies = [
     "huggingface_hub>=0.26",
     "pandas>=2.2",
@@ -18,6 +18,9 @@ dev = [
     "gradio>=6.0",
     "pytest>=8",
 ]
+
+[tool.setuptools]
+packages = ["pipeline"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

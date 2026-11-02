@@ -42,7 +42,6 @@ def build_category_chart():
         x_title="Count",
         y_title="",
         title="Assets per category (top 20)",
-        orientation="horizontal",
     )
 
 
@@ -129,7 +128,7 @@ def inspect_asset(selected):
     return validation[validation["asset"] == selected].drop(columns=["asset"])
 
 
-with gr.Blocks(title="SimReady Assets Explorer", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="SimReady Assets Explorer") as demo:
     gr.Markdown(
         f"# SimReady Assets Explorer\n"
         f"Community catalog of [nvidia/simready-assets]"
