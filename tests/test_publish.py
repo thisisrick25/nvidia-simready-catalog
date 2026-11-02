@@ -30,9 +30,6 @@ def test_publish_space_creates_repo_and_uploads():
         space_hardware=SpaceHardware.CPU_BASIC,
         exist_ok=True,
     )
-    api.request_space_hardware.assert_called_once_with(
-        "myns/nvidia-simready-catalog", hardware=SpaceHardware.CPU_BASIC,
-    )
     api.upload_folder.assert_called_once()
     call_kw = api.upload_folder.call_args
     assert call_kw.kwargs["repo_type"] == "space"

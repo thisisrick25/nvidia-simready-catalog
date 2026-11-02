@@ -54,7 +54,6 @@ def publish_space(namespace: str, api: HfApi) -> str:
         space_hardware=SpaceHardware.CPU_BASIC,
         exist_ok=True,
     )
-    api.request_space_hardware(repo_id, hardware=SpaceHardware.CPU_BASIC)
     api.upload_folder(
         folder_path=str(ROOT / "portal"),
         repo_id=repo_id,
