@@ -8,6 +8,7 @@ venv/
 
 # Data cache and generated outputs (regenerable via pipeline)
 data/
+*.log
 
 # OS
 Thumbs.db
