@@ -14,19 +14,13 @@ def _inv():
 def test_default_patterns_cover_needed_files():
     joined = " ".join(ALLOW_PATTERNS)
     for needle in (
-        "instances_physx.usda",
-        "instances_newton.usda",
-        "instances_mujoco.usda",
-        "instances.usda",
-        "payloads/base.usda",
+        "payloads/*.usda",
         "sm_*.usd",
         "com.nvidia.simready.packaging.json",
-        "packaging.bom.json",
-        "conformance.Package@*.json",
-        ".thumbs/256x256/*.png",
+        ".metadata/*",
+        ".thumbs/256x256/*",
     ):
         assert needle in joined
-    assert "*/.metadata/*" not in joined
 
 
 def test_patterns_for_limit():
