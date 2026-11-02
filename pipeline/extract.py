@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -19,7 +20,12 @@ ASSET_COLUMNS = [
     "features_total", "features_passed", "all_features_passed",
     "failing_features", "license", "package_id", "packaged_date",
     "asset_info_mass_kg", "asset_info_category", "size_total_bytes",
-    "size_payload_bytes", "thumb_url", "parse_status", "parse_error",
+    "size_payload_bytes", "geometry_size_bytes", "texture_size_bytes",
+    "source_asset_size_bytes", "metadata_size_bytes", "metadata_file_count",
+    "bom_file_count", "bom_entry_count", "bom_hash_count", "package_hash_count",
+    "package_format_version", "conformance_file_count", "conformance_profile",
+    "conformance_versions", "provenance_tool", "provenance_generated_date",
+    "provenance_exported_date", "thumb_url", "parse_status", "parse_error",
     "usd_date_generated",
 ]
 
@@ -99,11 +105,107 @@ def _resolve_inventory(row, inv, name):
         return
     row["size_total_bytes"] = int(sub["size"].sum())
     row["size_payload_bytes"] = int(sub.loc[sub["kind"] == "payload_usda", "size"].sum())
+    for column, kind in (
+        ("geometry_size_bytes", "geometry"),
+        ("texture_size_bytes", "texture"),
+        ("source_asset_size_bytes", "source_asset"),
+        ("metadata_size_bytes", "metadata"),
+    ):
+        row[column] = int(sub.loc[sub["kind"] == kind, "size"].sum())
     for kind in THUMB_KINDS_BY_PREFERENCE:
         candidates = sorted(sub.loc[sub["kind"] == kind, "path"])
         if candidates:
             row["thumb_url"] = HF_BASE + candidates[0]
             break
+
+
+def _count_hashes(value):
+    if isinstance(value, dict):
+        return sum(
+            (1 if any(token in str(key).lower() for token in ("hash", "checksum", "digest")) else 0)
+            + _count_hashes(item)
+            for key, item in value.items()
+        )
+    if isinstance(value, list):
+        return sum(_count_hashes(item) for item in value)
+    return 0
+
+
+def _find_values(value, names):
+    found = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if str(key).lower() in names and isinstance(item, (str, int, float)):
+                found.append(str(item))
+            found.extend(_find_values(item, names))
+    elif isinstance(value, list):
+        for item in value:
+            found.extend(_find_values(item, names))
+    return found
+
+
+def _find_lists(value, names):
+    found = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if str(key).lower() in names and isinstance(item, list):
+                found.append(item)
+            found.extend(_find_lists(item, names))
+    elif isinstance(value, list):
+        for item in value:
+            found.extend(_find_lists(item, names))
+    return found
+
+
+def _extract_metadata(asset_dir, row):
+    metadata_dir = asset_dir / ".metadata"
+    files = sorted(metadata_dir.glob("*.json"))
+    row["metadata_file_count"] = len(files)
+    row["bom_file_count"] = sum("bom" in path.name.lower() for path in files)
+    row["conformance_file_count"] = sum("conformance" in path.name.lower() for path in files)
+    versions = sorted(
+        {
+            match.group(1)
+            for path in files
+            if (match := re.search(r"Package@([^/]+)\.json$", path.name))
+        }
+    )
+    row["conformance_versions"] = ", ".join(versions)
+    row["bom_hash_count"] = 0
+    row["bom_entry_count"] = 0
+    row["package_hash_count"] = 0
+    for path in files:
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            logger.warning("could not parse metadata file %s", path)
+            continue
+        if "bom" in path.name.lower():
+            row["bom_hash_count"] += _count_hashes(document)
+            row["bom_entry_count"] += len(
+                sum(
+                    _find_lists(document, {key}),
+                    [],
+                )
+            )
+        row["package_hash_count"] += _count_hashes(document)
+        if "conformance" in path.name.lower():
+            row["conformance_profile"] = next(
+                iter(_find_values(document, {"profile", "package_profile"})),
+                None,
+            )
+        row["provenance_tool"] = row["provenance_tool"] or next(
+            iter(_find_values(document, {"tool", "tool_name", "generator", "authoring_tool"})),
+            None,
+        )
+        row["provenance_generated_date"] = row["provenance_generated_date"] or next(
+            iter(_find_values(document, {"generated_date", "date_generated", "created_at"})),
+            None,
+        )
+        row["provenance_exported_date"] = row["provenance_exported_date"] or next(
+            iter(_find_values(document, {"exported_date", "date_exported", "exported_at"})),
+            None,
+        )
 
 
 def _merge_base_data(doc, asset_dir):
@@ -150,6 +252,20 @@ def _extract_packaging(asset_dir):
     return {
         "license": pkg.get("license"),
         "package_id": pkg.get("package_id"),
+        "package_format_version": pkg.get("format_version"),
+        "package_hash_count": _count_hashes(pkg),
+        "provenance_tool": next(
+            iter(_find_values(pkg, {"tool", "tool_name", "generator", "authoring_tool"})),
+            None,
+        ),
+        "provenance_generated_date": next(
+            iter(_find_values(pkg, {"generated_date", "date_generated", "created_at"})),
+            None,
+        ),
+        "provenance_exported_date": next(
+            iter(_find_values(pkg, {"exported_date", "date_exported", "exported_at"})),
+            None,
+        ),
         "packaged_date": parse_packaging.deploy_date_from_package_id(
             pkg.get("package_id")
         ),
@@ -164,10 +280,13 @@ def extract_asset(asset_dir: Path, inv: pd.DataFrame):
         mass_kg=None, has_articulation=False, variants=[],
         features_total=0, features_passed=0, size_total_bytes=0,
         size_payload_bytes=0,
+        metadata_file_count=0, bom_file_count=0, bom_entry_count=0,
+        bom_hash_count=0, package_hash_count=0, conformance_file_count=0,
     )
     mesh_rows, val_rows, mat_rows = [], [], []
 
     _resolve_inventory(row, inv, name)
+    _extract_metadata(asset_dir, row)
 
     try:
         files = _payload_files(asset_dir)

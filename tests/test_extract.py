@@ -9,7 +9,17 @@ def make_cache(root, banana_usda, banana_pkg):
     a = root / "food_produce_banana_m01"
     (a / "simready_usd" / "payloads").mkdir(parents=True)
     (a / "simready_usd" / "payloads" / "instances_physx.usda").write_text(banana_usda, encoding="utf-8")
+    banana_pkg["format_version"] = "1.0"
     (a / "com.nvidia.simready.packaging.json").write_text(json.dumps(banana_pkg), encoding="utf-8")
+    metadata = a / ".metadata"
+    metadata.mkdir()
+    (metadata / "com.nvidia.simready.packaging.bom.json").write_text(
+        json.dumps({"files": [{"sha256": "abc"}, {"checksum": "def"}]}),
+        encoding="utf-8",
+    )
+    (metadata / "com.nvidia.simready.conformance.Package@1.0.0.json").write_text(
+        "{}", encoding="utf-8"
+    )
     empty = root / "empty_asset_x01"
     (empty / "simready_usd").mkdir(parents=True)
     inv = pd.DataFrame(
@@ -35,6 +45,13 @@ def test_extract_asset_banana(tmp_path, banana_usda, banana_pkg):
     assert row["license"] == "CC-BY-4.0"
     assert row["packaged_date"] == "2026-10-09"
     assert "resolve/main" in row["thumb_url"] and row["thumb_url"].endswith(".usd.png")
+    assert row["metadata_file_count"] == 2
+    assert row["bom_file_count"] == 1
+    assert row["bom_entry_count"] == 2
+    assert row["bom_hash_count"] == 2
+    assert row["package_hash_count"] == 2
+    assert row["package_format_version"] == "1.0"
+    assert row["conformance_versions"] == "1.0.0"
     assert len(meshes) == 1 and len(vals) == 8 and len(mats) == 1
     assert mats[0]["shader_class"] == "opaque"
     assert mats[0]["semantic_tokens"] == "organic"
