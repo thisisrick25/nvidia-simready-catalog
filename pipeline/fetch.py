@@ -15,11 +15,16 @@ DOWNLOAD_ATTEMPTS = 3
 RETRY_DELAY_SECONDS = 10
 
 ALLOW_PATTERNS = [
-    "*/simready_usd/payloads/*.usda",
+    "*/simready_usd/payloads/instances_physx.usda",
+    "*/simready_usd/payloads/instances_newton.usda",
+    "*/simready_usd/payloads/instances_mujoco.usda",
+    "*/simready_usd/payloads/instances.usda",
+    "*/simready_usd/payloads/base.usda",
     "*/simready_usd/sm_*.usd",
     "*/com.nvidia.simready.packaging.json",
-    "*/.metadata/*",
-    "*/.thumbs/256x256/*",
+    "*/.metadata/com.nvidia.simready.packaging.bom.json",
+    "*/.metadata/com.nvidia.simready.conformance.Package@*.json",
+    "*/.thumbs/256x256/*.png",
 ]
 
 
