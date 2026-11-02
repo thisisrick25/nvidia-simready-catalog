@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-from huggingface_hub import SpaceHardware
-
 from pipeline.publish import publish_dataset, publish_space, require_token
 
 
@@ -27,7 +25,6 @@ def test_publish_space_creates_repo_and_uploads():
         "myns/nvidia-simready-catalog",
         repo_type="space",
         space_sdk="gradio",
-        space_hardware=SpaceHardware.CPU_BASIC,
         exist_ok=True,
     )
     api.upload_folder.assert_called_once()

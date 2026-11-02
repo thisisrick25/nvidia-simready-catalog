@@ -5,6 +5,15 @@ import gradio as gr
 import numpy as np
 import pandas as pd
 
+try:
+    import spaces
+except ImportError:
+    class _FakeSpaces:
+        @staticmethod
+        def GPU(fn=None, **kw):
+            return fn if fn is not None else (lambda f: f)
+    spaces = _FakeSpaces()
+
 DATA = Path(__file__).parent / "data"
 
 
@@ -190,6 +199,12 @@ Credit: NVIDIA SimReady Assets — https://huggingface.co/datasets/nvidia/simrea
 - Assets referenced via hotlinked thumbnails served from the HF dataset
 """
         )
+
+@spaces.GPU
+def _gpu_warmup():
+    return "ok"
+
+demo.load(fn=_gpu_warmup)
 
 if __name__ == "__main__":
     demo.launch()

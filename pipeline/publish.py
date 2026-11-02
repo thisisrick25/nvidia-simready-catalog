@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-from huggingface_hub import HfApi, SpaceHardware, get_token
+from huggingface_hub import HfApi, get_token
 
 from pipeline.config import CARD_DIR, DATA_DIR, ROOT
 
@@ -51,7 +51,6 @@ def publish_space(namespace: str, api: HfApi) -> str:
         repo_id,
         repo_type="space",
         space_sdk="gradio",
-        space_hardware=SpaceHardware.CPU_BASIC,
         exist_ok=True,
     )
     api.upload_folder(
