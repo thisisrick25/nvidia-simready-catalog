@@ -18,7 +18,7 @@ pretty_name: SimReady Assets (NVIDIA)
 # NVIDIA SimReady Assets — Community Dataset Card
 
 > [!NOTE]
-> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-10-30. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
+> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-02. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
 
 NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **2,677 assets** totaling **489.68 GB** under **CC-BY-4.0**.
 
@@ -35,7 +35,7 @@ NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Phy
 | MuJoCo variant | 2,669 |
 | Newton variant | 2,669 |
 | License | CC-BY-4.0 |
-| Data as of | 2026-10-30 |
+| Data as of | 2026-11-02 |
 
 ## Directory structure
 
@@ -94,10 +94,13 @@ Per-mesh physics properties (`physics:mass`, `physics:centerOfMass`, `physics:di
 
 | Mass (per-asset sum) | Value |
 |---|---|
-| Minimum | 0 kg |
-| Median | 0.916132 kg |
-| Mean | 1789.14 kg |
+| Minimum | 0.000109254 kg |
+| Median | 0.923211 kg |
+| Mean | 1790.49 kg |
 | Maximum | 952461 kg |
+
+> [!WARNING]
+> **Known data quality note:** 22 assets (0.82%) report a summed mass above 5000 kg (e.g. warehouse structural modules, an exhaust manifold at ~500,000 kg) — these look like authoring/export defects in NVIDIA's source USD rather than real weights. We report the numbers as-is, unmodified; use the **median** above rather than the mean when reasoning about a typical asset.
 
 Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
 
@@ -123,8 +126,6 @@ Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
 
 | Asset | Mass (kg) |
 |---|---|
-| blinds_window_2m_closed_a01 | 0 |
-| tape_safety_white_2m10cm_b01 | 0 |
 | hardware_bearing_caster_a01 | 0.000109254 |
 | factory_nut_m4_loose | 0.000267644 |
 | factory_nut_m4_tight | 0.000268642 |
@@ -133,6 +134,8 @@ Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
 | factory_bolt_m04_loose | 0.00063011 |
 | screw_high_res | 0.000635557 |
 | factory_bolt_m04_tight | 0.000651707 |
+| hardware_bearingPin_a01 | 0.000784414 |
+| factory_nut_m8_loose | 0.000992802 |
 
 ## Physics engine variants
 
@@ -224,4 +227,4 @@ The assets are © NVIDIA Corporation, licensed [CC-BY-4.0](https://creativecommo
 - **SimReady Foundation** (validation specs & tooling): https://github.com/NVIDIA/simready-foundation
 - **Isaac Sim**: https://developer.nvidia.com/isaac/sim
 
-_Generated from repository data as of 2026-10-30; the dataset grows daily — re-run the pipeline for fresh numbers._
+_Generated from repository data as of 2026-11-02; the dataset grows daily — re-run the pipeline for fresh numbers._
