@@ -18,7 +18,7 @@ pretty_name: SimReady Assets (NVIDIA)
 # NVIDIA SimReady Assets — Community Dataset Card
 
 > [!NOTE]
-> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-02. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
+> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-03. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
 
 NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **2,677 assets** totaling **489.68 GB** under **CC-BY-4.0**.
 
@@ -28,14 +28,14 @@ NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Phy
 |---|---|
 | Assets | 2,677 |
 | Total size | 489.68 GB |
-| Files | 183,394 |
+| Files | 183,398 |
 | Categories | 14 |
 | Articulated assets | 5 (0.2%) |
 | PhysX variant | 2,669 |
 | MuJoCo variant | 2,669 |
 | Newton variant | 2,669 |
 | License | CC-BY-4.0 |
-| Data as of | 2026-11-02 |
+| Data as of | 2026-11-03 |
 
 ## Directory structure
 
@@ -183,7 +183,7 @@ Most common failing requirements:
 
 ## Growth
 
-Packaging dates extracted from package IDs run 2026-10-08 → 2026-10-29:
+Packaging dates extracted from package IDs run 2026-10-08 → 2026-11-02:
 
 ![Growth](assets/growth.png)
 
@@ -227,4 +227,4 @@ The assets are © NVIDIA Corporation, licensed [CC-BY-4.0](https://creativecommo
 - **SimReady Foundation** (validation specs & tooling): https://github.com/NVIDIA/simready-foundation
 - **Isaac Sim**: https://developer.nvidia.com/isaac/sim
 
-_Generated from repository data as of 2026-11-02; the dataset grows daily — re-run the pipeline for fresh numbers._
+_Generated from repository data as of 2026-11-03; the dataset grows daily — re-run the pipeline for fresh numbers._
