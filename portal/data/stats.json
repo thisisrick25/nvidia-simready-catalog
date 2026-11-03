@@ -1,0 +1,267 @@
+{
+  "as_of": "2026-11-02",
+  "n_assets": 2677,
+  "n_ok": 2669,
+  "n_parse_errors": 0,
+  "n_no_payloads": 8,
+  "n_no_physics_payload": 0,
+  "total_size_gb": 489.68,
+  "n_files": 183394,
+  "category_counts": {
+    "common_assets": 2314,
+    "props_isaac": 92,
+    "props_food": 91,
+    "omniverse": 85,
+    "props_warehouse": 32,
+    "SIM_READY": 32,
+    "props_kitchenware": 6,
+    "props_automotive_workshop_tools": 5,
+    "props_softbody": 4,
+    "props_endeavor_kitchen": 3,
+    "props_automotive_parts": 2,
+    "props_automotive_equipment": 1,
+    "props_kitchen_france": 1,
+    "props_hospital": 1
+  },
+  "n_categories": 14,
+  "asset_type_counts": {
+    "prop": 2669,
+    "nan": 8
+  },
+  "variant_counts": {
+    "MuJoCo": 2669,
+    "Newton": 2669,
+    "PhysX": 2669
+  },
+  "articulated_count": 5,
+  "articulated_pct": 0.2,
+  "mass_stats": {
+    "min": 0.00010925419,
+    "median": 0.92321086,
+    "mean": 1790.4854,
+    "max": 952460.94,
+    "n": 2667
+  },
+  "mass_outlier_threshold_kg": 5000.0,
+  "mass_outliers_count": 22,
+  "mass_outliers_pct": 0.82,
+  "heaviest10": [
+    [
+      "modular_warehouse_h10m_corner_out_a01",
+      952460.94
+    ],
+    [
+      "exhaustSystem_exhaust_manifold_f01",
+      501225.84
+    ],
+    [
+      "modular_warehouse_h10m_straight_90_a04",
+      404025.47
+    ],
+    [
+      "warehouse_h10m_straight_90_a04",
+      400081.41065230704
+    ],
+    [
+      "warehouse_h10m_straight_a04",
+      399747.9990448
+    ],
+    [
+      "modular_warehouse_h10m_straight_a04",
+      398601.47
+    ],
+    [
+      "modular_warehouse_h10m_center_a01",
+      302943.53
+    ],
+    [
+      "set_office_main_a01",
+      267161.0655
+    ],
+    [
+      "structure_wall_corner_a01",
+      217652.742
+    ],
+    [
+      "structure_wall_entrance_a01",
+      192773.799732
+    ]
+  ],
+  "lightest10": [
+    [
+      "hardware_bearing_caster_a01",
+      0.00010925419
+    ],
+    [
+      "factory_nut_m4_loose",
+      0.0002676438
+    ],
+    [
+      "factory_nut_m4_tight",
+      0.00026864247
+    ],
+    [
+      "hardware_screw_95_a01",
+      0.0004061824
+    ],
+    [
+      "hardware_screw_99_physics_a01",
+      0.0005
+    ],
+    [
+      "factory_bolt_m04_loose",
+      0.0006301104
+    ],
+    [
+      "screw_high_res",
+      0.0006355567
+    ],
+    [
+      "factory_bolt_m04_tight",
+      0.0006517065
+    ],
+    [
+      "hardware_bearingPin_a01",
+      0.0007844141
+    ],
+    [
+      "factory_nut_m8_loose",
+      0.0009928019
+    ]
+  ],
+  "validation_profile_counts": {
+    "Robotics-Prop": 2669,
+    "nan": 8
+  },
+  "validation_feature_rates": {
+    "FET000_CORE": [
+      3187,
+      3471
+    ],
+    "FET001_BASE_NEUTRAL": [
+      54,
+      3690
+    ],
+    "FET003_BASE_NEUTRAL": [
+      3684,
+      3689
+    ],
+    "FET003_BASE_PHYSX": [
+      3610,
+      3637
+    ],
+    "FET004_BASE_NEUTRAL": [
+      1571,
+      3690
+    ],
+    "FET004_BASE_PHYSX": [
+      1538,
+      3637
+    ],
+    "FET005_BASE_NEUTRAL": [
+      2412,
+      3690
+    ],
+    "FET006_BASE_MDL": [
+      40,
+      3470
+    ],
+    "FET100_BASE_ISAACSIM": [
+      0,
+      1
+    ]
+  },
+  "validation_pass_rate": 55.6,
+  "failing_requirements_top": [
+    [
+      "RB.MB.001",
+      3973
+    ],
+    [
+      "AA.001",
+      3464
+    ],
+    [
+      "VM.MDL.001",
+      3417
+    ],
+    [
+      "GSP.001",
+      1190
+    ],
+    [
+      "NP.008",
+      169
+    ],
+    [
+      "HI.009",
+      83
+    ],
+    [
+      "COL.001",
+      38
+    ],
+    [
+      "VM.MAT.001",
+      25
+    ],
+    [
+      "RB.001",
+      20
+    ],
+    [
+      "NP.005",
+      9
+    ],
+    [
+      "VM.TEX.002",
+      3
+    ],
+    [
+      "PMT.001",
+      3
+    ],
+    [
+      "NP.006",
+      2
+    ],
+    [
+      "JT.002",
+      2
+    ],
+    [
+      "ISA.001",
+      1
+    ]
+  ],
+  "approximation_counts": {
+    "sdf": 10658,
+    "convexDecomposition": 9
+  },
+  "size_mb_stats": {
+    "median": 70.29,
+    "mean": 182.92,
+    "max": 2417.42
+  },
+  "packaged_date_min": "2026-10-08",
+  "packaged_date_max": "2026-10-29",
+  "growth_by_date": {
+    "2026-10-08": 282,
+    "2026-10-09": 2138,
+    "2026-10-10": 92,
+    "2026-10-12": 22,
+    "2026-10-13": 13,
+    "2026-10-14": 3,
+    "2026-10-15": 8,
+    "2026-10-16": 5,
+    "2026-10-19": 4,
+    "2026-10-20": 1,
+    "2026-10-21": 6,
+    "2026-10-22": 2,
+    "2026-10-23": 3,
+    "2026-10-26": 4,
+    "2026-10-27": 40,
+    "2026-10-28": 45,
+    "2026-10-29": 1
+  }
+}
