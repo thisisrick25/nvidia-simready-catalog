@@ -120,15 +120,24 @@ def _resolve_inventory(row, inv, name):
 
 
 def _count_hashes(value):
-    if isinstance(value, dict):
-        return sum(
-            (1 if any(token in str(key).lower() for token in ("hash", "checksum", "digest")) else 0)
-            + _count_hashes(item)
-            for key, item in value.items()
+    def is_hash_key(key):
+        name = str(key).lower()
+        return (
+            any(token in name for token in ("hash", "checksum", "digest"))
+            or bool(re.fullmatch(r"(?:md|sha)\d+", name))
         )
-    if isinstance(value, list):
-        return sum(_count_hashes(item) for item in value)
-    return 0
+
+    def count(value, in_hash_container=False):
+        if isinstance(value, dict):
+            return sum(
+                count(item, in_hash_container or is_hash_key(key))
+                for key, item in value.items()
+            )
+        if isinstance(value, list):
+            return sum(count(item, in_hash_container) for item in value)
+        return 1 if in_hash_container else 0
+
+    return count(value)
 
 
 def _find_values(value, names):
@@ -184,7 +193,7 @@ def _extract_metadata(asset_dir, row):
             row["bom_hash_count"] += _count_hashes(document)
             row["bom_entry_count"] += len(
                 sum(
-                    _find_lists(document, {key}),
+                    _find_lists(document, {"files"}),
                     [],
                 )
             )
