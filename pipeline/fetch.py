@@ -4,8 +4,8 @@ import sys
 import time
 
 import pandas as pd
-from huggingface_hub.errors import HfHubHTTPError, LocalEntryNotFoundError
 from huggingface_hub import snapshot_download
+from huggingface_hub.errors import HfHubHTTPError, LocalEntryNotFoundError
 
 from pipeline.config import CACHE_DIR, DATA_DIR, REPO_ID
 
@@ -63,8 +63,12 @@ def fetch(limit=None):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Selectively download SimReady payload files")
-    ap.add_argument("--limit", type=int, default=None, help="only first N assets (smoke)")
+    ap = argparse.ArgumentParser(
+        description="Selectively download SimReady payload files"
+    )
+    ap.add_argument(
+        "--limit", type=int, default=None, help="only first N assets (smoke)"
+    )
     ap.add_argument("--dry-run", action="store_true", help="print patterns and exit")
     args = ap.parse_args()
     if args.dry_run:
