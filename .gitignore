@@ -8,6 +8,8 @@ venv/
 
 # Data cache and generated outputs (regenerable via pipeline)
 data/
+!portal/data/
+!portal/data/**
 *.log
 
 # OS
