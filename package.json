@@ -1,0 +1,10 @@
+{
+  "name": "simready-catalog",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "portal": "cd portal && npm run dev",
+    "portal:build": "cd portal && npm run build",
+    "portal:start": "cd portal && npm run start"
+  }
+}

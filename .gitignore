@@ -7,9 +7,7 @@ venv/
 .pytest_cache/
 
 # Data cache and generated outputs (regenerable via pipeline)
-data/
-!portal/data/
-!portal/data/**
+/data/
 *.log
 
 # OS
@@ -19,6 +17,3 @@ Thumbs.db
 # Secrets
 .env
 HF_TOKEN*
-
-# SDD scratch (progress ledger, briefs, review packages)
-.superpowers/
