@@ -144,27 +144,30 @@ Each asset is extracted inside its own try/except -- one broken payload never cr
 the run. The `parse_status` column tracks the outcome per asset: `ok`,
 `no_payloads`, `no_physics_payload`, or `parse_error`.
 
-```
- ┌───────────┐    ┌───────┐    ┌─────────┐    ┌───────────┐
- │ inventory │───▶│ fetch │───▶│ extract │───▶│ aggregate │
- └───────────┘    └───────┘    └─────────┘    └───────────┘
-   HF tree API     ~300 MB       regex          stats.json
-   183k files      payloads      parsing
-                                 4 Parquets
-                                                    │
-                                 ┌────────────┐     │
-                                  │ build_card │◀────┘
-                                  └────────────┘
-                                   Markdown         ┌────────┐
-                                   + YAML           │ charts │
-                                                    └────────┘
-                                                     6 PNGs
-                                       │
-                                  ┌─────────┐
-                                  │ publish │
-                                  └─────────┘
-                                   HF dataset
-                                   + Space
+```mermaid
+graph TD
+    A[NVIDIA Dataset<br/>nvidia/simready-assets] --> B[inventory]
+    B --> C[fetch ~300MB]
+    C --> D[extract 4 Parquets]
+    D --> E[aggregate stats.json]
+    E --> F[charts 6 PNGs]
+    E --> G[build_card]
+    D --> H[portal/public/data/*.json]
+    
+    G --> I[HF Dataset<br/>thisisrick25/...]
+    F --> I
+    H --> I
+    
+    G --> J[HF Static Space<br/>*.static.hf.space]
+    H --> J
+    
+    H --> K[Vercel Deploy<br/>catalog.swapnaneel.me]
+    K --> L[Next.js SSR]
+    
+    style I fill:#ff6b6b,color:#fff
+    style J fill:#ff6b6b,color:#fff
+    style K fill:#000,color:#fff
+    style L fill:#000,color:#fff
 ```
 
 ## Project Structure
