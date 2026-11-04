@@ -35,6 +35,12 @@ def publish_dataset(namespace: str, api: HfApi) -> str:
         repo_type="dataset",
     )
     api.upload_folder(
+        folder_path=str(CARD_DIR / "assets"),
+        repo_id=repo_id,
+        repo_type="dataset",
+        path_in_repo="assets",
+    )
+    api.upload_folder(
         folder_path=str(DATA_DIR),
         repo_id=repo_id,
         repo_type="dataset",
