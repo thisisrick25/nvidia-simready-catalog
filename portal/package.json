@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "python -m http.server 7860 --directory .",
+    "lint": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
