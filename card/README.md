@@ -18,7 +18,7 @@ pretty_name: SimReady Assets (NVIDIA)
 # NVIDIA SimReady Assets — Community Dataset Card
 
 > [!NOTE]
-> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-03. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
+> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-04. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
 
 NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **2,677 assets** totaling **489.68 GB** under **CC-BY-4.0**.
 
@@ -35,7 +35,7 @@ NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Phy
 | MuJoCo variant | 2,669 |
 | Newton variant | 2,669 |
 | License | CC-BY-4.0 |
-| Data as of | 2026-11-03 |
+| Data as of | 2026-11-04 |
 
 ## Directory structure
 
@@ -220,11 +220,11 @@ The assets are © NVIDIA Corporation, licensed [CC-BY-4.0](https://creativecommo
 }
 ```
 
-## Companion Resources
+## Companion resources
 
-- **GitHub repo:** https://github.com/thisisrick25/nvidia-simready-catalog
-- **HF Space:** https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog · https://thisisrick25-nvidia-simready-catalog.static.hf.space
-- **HF Dataset:** https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog
-- **HF Dataset (source):** https://huggingface.co/datasets/nvidia/simready-assets
-- **SimReady Foundation:** https://github.com/NVIDIA/simready-foundation
-- **Isaac Sim:** https://developer.nvidia.com/isaac/sim
+- **Catalog parquets** (per-asset physics/validation/size tables): see this project's companion dataset
+- **Interactive stats portal**: see this project's Space
+- **SimReady Foundation** (validation specs & tooling): https://github.com/NVIDIA/simready-foundation
+- **Isaac Sim**: https://developer.nvidia.com/isaac/sim
+
+_Generated from repository data as of 2026-11-04; the dataset grows daily — re-run the pipeline for fresh numbers._
