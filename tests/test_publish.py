@@ -24,12 +24,13 @@ def test_publish_space_creates_repo_and_uploads():
     api.create_repo.assert_called_once_with(
         "myns/nvidia-simready-catalog",
         repo_type="space",
-        space_sdk="gradio",
+        space_sdk="static",
         exist_ok=True,
     )
     api.upload_folder.assert_called_once()
     call_kw = api.upload_folder.call_args
     assert call_kw.kwargs["repo_type"] == "space"
+    assert call_kw.kwargs["folder_path"].endswith("portal\\out")
 
 
 @patch.dict("os.environ", {"HF_TOKEN": "test-token"})
