@@ -220,11 +220,11 @@ The assets are © NVIDIA Corporation, licensed [CC-BY-4.0](https://creativecommo
 }
 ```
 
-## Companion resources
+## Companion Resources
 
-- **Catalog parquets** (per-asset physics/validation/size tables): see this project's companion dataset
-- **Interactive stats portal**: see this project's Space
-- **SimReady Foundation** (validation specs & tooling): https://github.com/NVIDIA/simready-foundation
-- **Isaac Sim**: https://developer.nvidia.com/isaac/sim
-
-_Generated from repository data as of 2026-11-03; the dataset grows daily — re-run the pipeline for fresh numbers._
+- **GitHub repo:** https://github.com/thisisrick25/nvidia-simready-catalog
+- **HF Space:** https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog · https://thisisrick25-nvidia-simready-catalog.static.hf.space
+- **HF Dataset:** https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog
+- **HF Dataset (source):** https://huggingface.co/datasets/nvidia/simready-assets
+- **SimReady Foundation:** https://github.com/NVIDIA/simready-foundation
+- **Isaac Sim:** https://developer.nvidia.com/isaac/sim

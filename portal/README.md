@@ -28,3 +28,12 @@ The JSON source data lives in `public/data/` and is copied into the export's
 `/data/` path.
 
 Assets © NVIDIA Corporation, CC-BY-4.0.
+
+## Links
+
+- **GitHub repo:** https://github.com/thisisrick25/nvidia-simready-catalog
+- **HF Space:** https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog · https://thisisrick25-nvidia-simready-catalog.static.hf.space
+- **HF Dataset:** https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog
+- **HF Dataset (source):** https://huggingface.co/datasets/nvidia/simready-assets
+- **SimReady Foundation:** https://github.com/NVIDIA/simready-foundation
+- **Isaac Sim:** https://developer.nvidia.com/isaac/sim

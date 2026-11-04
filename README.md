@@ -14,6 +14,15 @@ parses every asset's physics and validation metadata, and produces a full
 interactive [Next.js portal](portal/), and publishes everything to
 HuggingFace.
 
+## Related Repositories
+
+- **GitHub repo:** [https://github.com/thisisrick25/nvidia-simready-catalog](https://github.com/thisisrick25/nvidia-simready-catalog)
+- **HF Space:** [https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog](https://huggingface.co/spaces/thisisrick25/nvidia-simready-catalog) · [https://thisisrick25-nvidia-simready-catalog.static.hf.space](https://thisisrick25-nvidia-simready-catalog.static.hf.space/)
+- **HF Dataset:** [https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog](https://huggingface.co/datasets/thisisrick25/nvidia-simready-catalog)
+- **HF Dataset (source):** [https://huggingface.co/datasets/nvidia/simready-assets](https://huggingface.co/datasets/nvidia/simready-assets)
+- **SimReady Foundation:** [https://github.com/NVIDIA/simready-foundation](https://github.com/NVIDIA/simready-foundation)
+- **Isaac Sim:** [https://developer.nvidia.com/isaac/sim](https://developer.nvidia.com/isaac/sim)
+
 ## Key Findings
 
 - **2,677 assets** across **14 taxonomy groups** (common_assets, props_food,
