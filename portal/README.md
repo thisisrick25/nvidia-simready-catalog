@@ -27,6 +27,12 @@ npm run build
 The JSON source data lives in `public/data/` and is copied into the export's
 `/data/` path.
 
+When the Vercel deployment is proxied under
+`/projects/nvidia-simready-catalog`, set the Vercel environment variable
+`NEXT_PUBLIC_ASSET_PREFIX` to `/projects/nvidia-simready-catalog` for the
+Preview and Production environments. Leave it unset for a deployment served at
+its own domain.
+
 Assets © NVIDIA Corporation, CC-BY-4.0.
 
 ## Links
