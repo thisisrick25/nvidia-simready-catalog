@@ -50,11 +50,11 @@ def publish_space(namespace: str, api: HfApi) -> str:
     api.create_repo(
         repo_id,
         repo_type="space",
-        space_sdk="gradio",
+        space_sdk="static",
         exist_ok=True,
     )
     api.upload_folder(
-        folder_path=str(ROOT / "portal"),
+        folder_path=str(ROOT / "portal" / "out"),
         repo_id=repo_id,
         repo_type="space",
     )

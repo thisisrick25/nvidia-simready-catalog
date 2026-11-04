@@ -1,22 +1,10 @@
 import argparse
 import logging
-import shutil
 
-from pipeline import aggregate, build_card, charts, extract, fetch, inventory
-from pipeline.config import DATA_DIR, PORTAL_DATA_DIR
+from pipeline import aggregate, build_card, charts, extract, export_portal_json, fetch, inventory
+from pipeline.config import DATA_DIR
 
 logger = logging.getLogger(__name__)
-
-SYNC_FILES = ["assets.parquet", "meshes.parquet", "validation.parquet", "stats.json"]
-
-
-def sync_portal_data():
-    PORTAL_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    for name in SYNC_FILES:
-        src = DATA_DIR / name
-        if src.exists():
-            shutil.copy2(src, PORTAL_DATA_DIR / name)
-    logger.info("synced portal data -> %s", PORTAL_DATA_DIR)
 
 
 def main():
@@ -45,7 +33,8 @@ def main():
     charts.main()
     logger.info("== card ==")
     build_card.main()
-    sync_portal_data()
+    logger.info("== portal export ==")
+    export_portal_json.main()
     logger.info(
         "done: %d assets, %d categories, as of %s",
         stats["n_assets"], stats["n_categories"], stats["as_of"],

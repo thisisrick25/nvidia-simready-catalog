@@ -10,5 +10,6 @@ DATA_DIR = Path(os.environ.get("SIMREADY_DATA_DIR", ROOT / "data"))
 CACHE_DIR = Path(os.environ.get("SIMREADY_CACHE_DIR", DATA_DIR / "cache"))
 CARD_DIR = ROOT / "card"
 PORTAL_DATA_DIR = ROOT / "portal" / "data"
+PORTAL_STATIC_DATA_DIR = ROOT / "portal" / "public" / "data"
 
 HF_BASE = f"https://huggingface.co/datasets/{REPO_ID}/resolve/main/"
