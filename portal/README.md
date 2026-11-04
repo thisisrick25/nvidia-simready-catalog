@@ -1,17 +1,17 @@
 ---
-title: SimReady Assets Explorer
+title: SimReady Explorer
 emoji: 🤖
 colorFrom: green
 colorTo: yellow
-sdk: gradio
-sdk_version: 6.31.0
-app_file: app.py
+sdk: static
 pinned: false
 license: cc-by-4.0
-short_description: Interactive stats portal for NVIDIA SimReady Assets
+short_description: Interactive catalog for NVIDIA SimReady Assets
 ---
 
-Interactive stats portal for [nvidia/simready-assets](https://huggingface.co/datasets/nvidia/simready-assets).
+# SimReady Explorer
+
+Interactive catalog for [nvidia/simready-assets](https://huggingface.co/datasets/nvidia/simready-assets).
 
 Community catalog: asset-level physics (mass, rigid bodies, articulation), category
 and size distributions, engine variant coverage (PhysX/MuJoCo/Newton), and SimReady
