@@ -20,6 +20,10 @@ jobs:
           cache: npm
           cache-dependency-path: portal/package-lock.json
 
+      - name: Install portal dependencies
+        run: npm ci
+        working-directory: portal
+
       - name: Build Next.js portal
         run: npm run portal:build
 
