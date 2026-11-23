@@ -18,24 +18,24 @@ pretty_name: SimReady Assets (NVIDIA)
 # NVIDIA SimReady Assets — Community Dataset Card
 
 > [!NOTE]
-> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-16. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
+> This card was produced by the community catalog project and offered to NVIDIA; numbers are computed programmatically from the repo tree and payload files on 2026-11-23. Verify against https://huggingface.co/datasets/nvidia/simready-assets for the latest state.
 
-NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **2,677 assets** totaling **489.68 GB** under **CC-BY-4.0**.
+NVIDIA's **SimReady Assets** are simulation-ready 3D models for robotics and Physical AI: every asset ships with tuned physics (mass, inertia, collision approximations), materials, and variants for **PhysX**, **MuJoCo**, and **Newton** physics engines. The dataset contains **2,919 assets** totaling **517.85 GB** under **CC-BY-4.0**.
 
 ## Dataset at a glance
 
 |  |  |
 |---|---|
-| Assets | 2,677 |
-| Total size | 489.68 GB |
-| Files | 183,398 |
-| Categories | 14 |
+| Assets | 2,919 |
+| Total size | 517.85 GB |
+| Files | 193,453 |
+| Categories | 113 |
 | Articulated assets | 5 (0.2%) |
-| PhysX variant | 2,669 |
-| MuJoCo variant | 2,669 |
-| Newton variant | 2,669 |
+| PhysX variant | 2,911 |
+| MuJoCo variant | 2,911 |
+| Newton variant | 2,911 |
 | License | CC-BY-4.0 |
-| Data as of | 2026-11-16 |
+| Data as of | 2026-11-23 |
 
 ## Directory structure
 
@@ -72,19 +72,25 @@ Asset names follow `<category>_<type>_<variant>` (e.g. `food_produce_banana_m01`
 | Category (taxonomy group) | Assets |
 |---|---|
 | common_assets | 2,314 |
-| props_isaac | 92 |
+| props_isaac | 106 |
 | props_food | 91 |
 | omniverse | 85 |
+| simready_usd | 84 |
+| props_kitchen_france | 46 |
 | props_warehouse | 32 |
 | SIM_READY | 32 |
 | props_kitchenware | 6 |
 | props_automotive_workshop_tools | 5 |
 | props_softbody | 4 |
 | props_endeavor_kitchen | 3 |
+| akorkodola | 2 |
 | props_automotive_parts | 2 |
-| props_automotive_equipment | 1 |
-| props_kitchen_france | 1 |
-| props_hospital | 1 |
+| appliance_stoveHood_a01 | 1 |
+| cleaning_bathproduct_a01 | 1 |
+| cleaning_bathproduct_a02 | 1 |
+| cleaning_bathproduct_a03 | 1 |
+| sm_cleaning_napkin_a01_01.usda | 1 |
+| sm_cleaning_spray_a01_01.usda | 1 |
 
 ![Assets per category](assets/categories.png)
 
@@ -95,14 +101,14 @@ Per-mesh physics properties (`physics:mass`, `physics:centerOfMass`, `physics:di
 | Mass (per-asset sum) | Value |
 |---|---|
 | Minimum | 0.000109254 kg |
-| Median | 0.923211 kg |
-| Mean | 1790.49 kg |
+| Median | 0.89697 kg |
+| Mean | 2242.58 kg |
 | Maximum | 952461 kg |
 
 > [!WARNING]
-> **Known data quality note:** 22 assets (0.82%) report a summed mass above 5000 kg (e.g. warehouse structural modules, an exhaust manifold at ~500,000 kg) — these look like authoring/export defects in NVIDIA's source USD rather than real weights. We report the numbers as-is, unmodified; use the **median** above rather than the mean when reasoning about a typical asset.
+> **Known data quality note:** 33 assets (1.13%) report a summed mass above 5000 kg (e.g. warehouse structural modules, an exhaust manifold at ~500,000 kg) — these look like authoring/export defects in NVIDIA's source USD rather than real weights. We report the numbers as-is, unmodified; use the **median** above rather than the mean when reasoning about a typical asset.
 
-Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
+Collision approximations in use: `convexDecomposition` (9), `sdf` (11,043)
 
 ![Mass distribution](assets/mass_hist.png)
 ![Download size](assets/sizes_hist.png)
@@ -113,14 +119,14 @@ Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
 |---|---|
 | modular_warehouse_h10m_corner_out_a01 | 952461 |
 | exhaustSystem_exhaust_manifold_f01 | 501226 |
+| modular_warehouse_h450cm_straight_e01 | 488196 |
+| modular_warehouse_a12_h10m_straight_a01 | 406372 |
 | modular_warehouse_h10m_straight_90_a04 | 404025 |
 | warehouse_h10m_straight_90_a04 | 400081 |
 | warehouse_h10m_straight_a04 | 399748 |
 | modular_warehouse_h10m_straight_a04 | 398601 |
 | modular_warehouse_h10m_center_a01 | 302944 |
 | set_office_main_a01 | 267161 |
-| structure_wall_corner_a01 | 217653 |
-| structure_wall_entrance_a01 | 192774 |
 
 ### Lightest assets
 
@@ -131,11 +137,11 @@ Collision approximations in use: `convexDecomposition` (9), `sdf` (10,658)
 | factory_nut_m4_tight | 0.000268642 |
 | hardware_screw_95_a01 | 0.000406182 |
 | hardware_screw_99_physics_a01 | 0.0005 |
+| factory_bolt_m4_loose | 0.000628067 |
 | factory_bolt_m04_loose | 0.00063011 |
 | screw_high_res | 0.000635557 |
+| factory_bolt_m4_tight | 0.000651207 |
 | factory_bolt_m04_tight | 0.000651707 |
-| hardware_bearingPin_a01 | 0.000784414 |
-| factory_nut_m8_loose | 0.000992802 |
 
 ## Physics engine variants
 
@@ -183,7 +189,7 @@ Most common failing requirements:
 
 ## Growth
 
-Packaging dates extracted from package IDs run 2026-10-08 → 2026-11-02:
+Packaging dates extracted from package IDs run 2026-10-08 → 2026-11-19:
 
 ![Growth](assets/growth.png)
 
@@ -227,4 +233,4 @@ The assets are © NVIDIA Corporation, licensed [CC-BY-4.0](https://creativecommo
 - **SimReady Foundation** (validation specs & tooling): https://github.com/NVIDIA/simready-foundation
 - **Isaac Sim**: https://developer.nvidia.com/isaac/sim
 
-_Generated from repository data as of 2026-11-16; the dataset grows daily — re-run the pipeline for fresh numbers._
+_Generated from repository data as of 2026-11-23; the dataset grows daily — re-run the pipeline for fresh numbers._
